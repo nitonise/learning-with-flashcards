@@ -10,6 +10,7 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 
 import { DeckStore } from '../../../core/deck-store';
 import { Flashcard } from '../../../core/deck.model';
+import { ToastService } from '../../../core/toast';
 
 const trimmedRequired: ValidatorFn = (control: AbstractControl): ValidationErrors | null => {
   const value = control.value;
@@ -29,6 +30,7 @@ export class DeckEditor {
   private readonly formBuilder = inject(FormBuilder);
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
+  private readonly toast = inject(ToastService);
 
   protected readonly deckId = signal(this.route.snapshot.paramMap.get('deckId'));
   protected readonly editingCardId = signal<string | null>(null);
@@ -77,10 +79,12 @@ export class DeckEditor {
 
     if (deckId) {
       this.deckStore.updateDeck(deckId, value);
+      this.toast.success('Deck changes saved.');
       return;
     }
 
     const deck = this.deckStore.createDeck(value.name, value.description);
+    this.toast.success('Deck created.');
     void this.router.navigate(['/decks', deck.id, 'edit']);
   }
 
@@ -102,8 +106,10 @@ export class DeckEditor {
 
     if (editingCardId) {
       this.deckStore.updateCard(deckId, editingCardId, value.front, value.back);
+      this.toast.success('Card changes saved.');
     } else {
       this.deckStore.addCard(deckId, value.front, value.back);
+      this.toast.success('Card created.');
     }
 
     this.cancelCardEdit();
@@ -131,6 +137,7 @@ export class DeckEditor {
 
     if (deckId && confirmed) {
       this.deckStore.deleteCard(deckId, card.id);
+      this.toast.success('Card deleted.');
       if (this.editingCardId() === card.id) {
         this.cancelCardEdit();
       }

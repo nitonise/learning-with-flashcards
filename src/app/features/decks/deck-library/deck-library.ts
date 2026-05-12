@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/c
 import { RouterLink } from '@angular/router';
 
 import { DeckStore } from '../../../core/deck-store';
+import { ToastService } from '../../../core/toast';
 
 @Component({
   selector: 'app-deck-library',
@@ -12,6 +13,7 @@ import { DeckStore } from '../../../core/deck-store';
 })
 export class DeckLibrary {
   private readonly deckStore = inject(DeckStore);
+  private readonly toast = inject(ToastService);
 
   protected readonly decks = this.deckStore.decks;
   protected readonly hasDecks = computed(() => this.decks().length > 0);
@@ -21,6 +23,7 @@ export class DeckLibrary {
 
     if (confirmed) {
       this.deckStore.deleteDeck(deckId);
+      this.toast.success('Deck deleted.');
     }
   }
 }
