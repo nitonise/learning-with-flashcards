@@ -25,7 +25,6 @@
         class="flashcard surface-panel"
         type="button"
         (click)="toggleFlip()"
-        [attr.aria-label]="'Flip card. Showing ' + activeSide()"
       >
         <span class="flashcard__side">{{ activeSide() }}</span>
         <span class="flashcard__text">{{ activeText() }}</span>

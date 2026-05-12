@@ -1,9 +1,21 @@
-import { ChangeDetectionStrategy, Component, computed, effect, inject, signal } from '@angular/core';
-import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import {
+  AbstractControl,
+  FormBuilder,
+  ReactiveFormsModule,
+  ValidationErrors,
+  ValidatorFn,
+} from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 
 import { DeckStore } from '../../../core/deck-store';
 import { Flashcard } from '../../../core/deck.model';
+
+const trimmedRequired: ValidatorFn = (control: AbstractControl): ValidationErrors | null => {
+  const value = control.value;
+
+  return typeof value === 'string' && value.trim().length > 0 ? null : { required: true };
+};
 
 @Component({
   selector: 'app-deck-editor',
@@ -31,28 +43,26 @@ export class DeckEditor {
   });
 
   protected readonly deckForm = this.formBuilder.nonNullable.group({
-    name: ['', [Validators.required]],
+    name: ['', [trimmedRequired]],
     description: [''],
   });
   protected readonly cardForm = this.formBuilder.nonNullable.group({
-    front: ['', [Validators.required]],
-    back: ['', [Validators.required]],
+    front: ['', [trimmedRequired]],
+    back: ['', [trimmedRequired]],
   });
 
   constructor() {
-    effect(() => {
-      const deck = this.deck();
+    const deck = this.deck();
 
-      if (deck) {
-        this.deckForm.setValue(
-          {
-            name: deck.name,
-            description: deck.description,
-          },
-          { emitEvent: false },
-        );
-      }
-    });
+    if (deck) {
+      this.deckForm.setValue(
+        {
+          name: deck.name,
+          description: deck.description,
+        },
+        { emitEvent: false },
+      );
+    }
   }
 
   protected saveDeck(): void {

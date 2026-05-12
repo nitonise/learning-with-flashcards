@@ -20,6 +20,28 @@ function storedDeck(): Deck {
   };
 }
 
+async function configureDeckEditor(routeParams: Record<string, string> = {}): Promise<void> {
+  await TestBed.configureTestingModule({
+    imports: [DeckEditor],
+    providers: [
+      provideRouter([]),
+      {
+        provide: ActivatedRoute,
+        useValue: {
+          snapshot: {
+            paramMap: convertToParamMap(routeParams),
+          },
+        },
+      },
+    ],
+  }).compileComponents();
+}
+
+function setFieldValue(field: HTMLInputElement | HTMLTextAreaElement, value: string): void {
+  field.value = value;
+  field.dispatchEvent(new Event('input'));
+}
+
 describe('DeckEditor', () => {
   afterEach(() => {
     localStorage.clear();
@@ -29,20 +51,7 @@ describe('DeckEditor', () => {
   it('shows deck form validation', async () => {
     localStorage.setItem(storageKey, JSON.stringify([]));
 
-    await TestBed.configureTestingModule({
-      imports: [DeckEditor],
-      providers: [
-        provideRouter([]),
-        {
-          provide: ActivatedRoute,
-          useValue: {
-            snapshot: {
-              paramMap: convertToParamMap({}),
-            },
-          },
-        },
-      ],
-    }).compileComponents();
+    await configureDeckEditor();
 
     const fixture = TestBed.createComponent(DeckEditor);
     fixture.detectChanges();
@@ -55,23 +64,29 @@ describe('DeckEditor', () => {
     expect(compiled.textContent).toContain('Enter a deck name.');
   });
 
+  it('rejects whitespace-only deck names', async () => {
+    localStorage.setItem(storageKey, JSON.stringify([]));
+
+    await configureDeckEditor();
+
+    const fixture = TestBed.createComponent(DeckEditor);
+    fixture.detectChanges();
+
+    const nameInput = fixture.nativeElement.querySelector('#deck-name') as HTMLInputElement;
+    setFieldValue(nameInput, '   ');
+
+    const form = fixture.nativeElement.querySelector('form') as HTMLFormElement;
+    form.dispatchEvent(new Event('submit'));
+    fixture.detectChanges();
+
+    const compiled = fixture.nativeElement as HTMLElement;
+    expect(compiled.textContent).toContain('Enter a deck name.');
+  });
+
   it('shows card form validation', async () => {
     localStorage.setItem(storageKey, JSON.stringify([storedDeck()]));
 
-    await TestBed.configureTestingModule({
-      imports: [DeckEditor],
-      providers: [
-        provideRouter([]),
-        {
-          provide: ActivatedRoute,
-          useValue: {
-            snapshot: {
-              paramMap: convertToParamMap({ deckId: 'deck-editor-test' }),
-            },
-          },
-        },
-      ],
-    }).compileComponents();
+    await configureDeckEditor({ deckId: 'deck-editor-test' });
 
     const fixture = TestBed.createComponent(DeckEditor);
     fixture.detectChanges();
@@ -83,5 +98,55 @@ describe('DeckEditor', () => {
     const compiled = fixture.nativeElement as HTMLElement;
     expect(compiled.textContent).toContain('Enter the card front.');
     expect(compiled.textContent).toContain('Enter the card back.');
+  });
+
+  it('rejects whitespace-only card sides', async () => {
+    localStorage.setItem(storageKey, JSON.stringify([storedDeck()]));
+
+    await configureDeckEditor({ deckId: 'deck-editor-test' });
+
+    const fixture = TestBed.createComponent(DeckEditor);
+    fixture.detectChanges();
+
+    const frontInput = fixture.nativeElement.querySelector('#card-front') as HTMLTextAreaElement;
+    const backInput = fixture.nativeElement.querySelector('#card-back') as HTMLTextAreaElement;
+    setFieldValue(frontInput, '   ');
+    setFieldValue(backInput, '   ');
+
+    const forms = fixture.nativeElement.querySelectorAll('form') as NodeListOf<HTMLFormElement>;
+    forms[1].dispatchEvent(new Event('submit'));
+    fixture.detectChanges();
+
+    const compiled = fixture.nativeElement as HTMLElement;
+    expect(compiled.textContent).toContain('Enter the card front.');
+    expect(compiled.textContent).toContain('Enter the card back.');
+  });
+
+  it('keeps dirty deck fields when cards are added', async () => {
+    localStorage.setItem(storageKey, JSON.stringify([storedDeck()]));
+
+    await configureDeckEditor({ deckId: 'deck-editor-test' });
+
+    const fixture = TestBed.createComponent(DeckEditor);
+    fixture.detectChanges();
+
+    const nameInput = fixture.nativeElement.querySelector('#deck-name') as HTMLInputElement;
+    const descriptionInput = fixture.nativeElement.querySelector(
+      '#deck-description',
+    ) as HTMLTextAreaElement;
+    setFieldValue(nameInput, 'Unsaved deck name');
+    setFieldValue(descriptionInput, 'Unsaved deck description');
+
+    const frontInput = fixture.nativeElement.querySelector('#card-front') as HTMLTextAreaElement;
+    const backInput = fixture.nativeElement.querySelector('#card-back') as HTMLTextAreaElement;
+    setFieldValue(frontInput, 'Question');
+    setFieldValue(backInput, 'Answer');
+
+    const forms = fixture.nativeElement.querySelectorAll('form') as NodeListOf<HTMLFormElement>;
+    forms[1].dispatchEvent(new Event('submit'));
+    fixture.detectChanges();
+
+    expect(nameInput.value).toBe('Unsaved deck name');
+    expect(descriptionInput.value).toBe('Unsaved deck description');
   });
 });

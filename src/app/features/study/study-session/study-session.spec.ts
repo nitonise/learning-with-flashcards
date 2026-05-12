@@ -89,6 +89,17 @@ describe('StudySession', () => {
     expect(compiled.querySelector('.flashcard__text')?.textContent).toContain('Question two');
   });
 
+  it('keeps the visible card text in the flashcard accessible name', () => {
+    const fixture = TestBed.createComponent(StudySession);
+    fixture.detectChanges();
+
+    const compiled = fixture.nativeElement as HTMLElement;
+    const flashcard = compiled.querySelector('.flashcard') as HTMLButtonElement;
+
+    expect(flashcard.getAttribute('aria-label')).toBeNull();
+    expect(flashcard.textContent).toContain('Question one');
+  });
+
   it('preserves the same card set when shuffled', () => {
     const fixture = TestBed.createComponent(StudySession);
     fixture.detectChanges();
