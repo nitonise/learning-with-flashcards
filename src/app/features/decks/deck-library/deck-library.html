@@ -1,0 +1,44 @@
+<section class="library-hero" aria-labelledby="library-title">
+  <div>
+    <p class="eyebrow">Deck library</p>
+    <h1 id="library-title" class="page-title">Build small decks. Study without clutter.</h1>
+    <p class="page-copy">
+      Create plain front and back flashcards, then open a focused study session when the deck is
+      ready.
+    </p>
+  </div>
+
+  <a class="button primary" routerLink="/decks/new">Create deck</a>
+</section>
+
+@if (hasDecks()) {
+  <section class="deck-grid" aria-label="Saved decks">
+    @for (deck of decks(); track deck.id) {
+      <article class="deck-card surface-panel">
+        <div class="deck-card__body">
+          <p class="deck-card__meta">{{ deck.cards.length }} cards</p>
+          <h2>{{ deck.name }}</h2>
+          @if (deck.description) {
+            <p>{{ deck.description }}</p>
+          } @else {
+            <p class="muted">No description yet.</p>
+          }
+        </div>
+
+        <div class="deck-card__actions" aria-label="Actions for {{ deck.name }}">
+          <a class="button accent" [routerLink]="['/study', deck.id]">Study</a>
+          <a class="button" [routerLink]="['/decks', deck.id, 'edit']">Edit</a>
+          <button class="button danger" type="button" (click)="deleteDeck(deck.id, deck.name)">
+            Delete
+          </button>
+        </div>
+      </article>
+    }
+  </section>
+} @else {
+  <section class="empty-state" aria-labelledby="empty-library-title">
+    <h2 id="empty-library-title" class="section-title">No decks yet</h2>
+    <p>Add your first deck to start building a reusable study set.</p>
+    <a class="button primary" routerLink="/decks/new">Create deck</a>
+  </section>
+}

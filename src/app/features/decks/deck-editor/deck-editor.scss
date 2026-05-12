@@ -1,0 +1,109 @@
+.editor-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(18rem, 24rem);
+  gap: 1rem;
+  align-items: start;
+}
+
+.deck-form,
+.card-composer {
+  display: grid;
+  gap: 1rem;
+  padding: clamp(1rem, 3vw, 1.4rem);
+}
+
+.card-composer {
+  position: sticky;
+  top: 6rem;
+}
+
+.card-composer form {
+  display: grid;
+  gap: 1rem;
+}
+
+.cards-section {
+  margin-top: 2rem;
+}
+
+.cards-heading {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.card-list {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.card-row {
+  display: grid;
+  grid-template-columns: 3rem minmax(0, 1fr) auto;
+  gap: 1rem;
+  align-items: stretch;
+  padding: 0.9rem;
+}
+
+.card-row__index {
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--line);
+  background: var(--surface);
+  color: var(--accent);
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 1.55rem;
+  font-weight: 700;
+}
+
+.card-row__content {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+
+.card-row h3 {
+  margin: 0 0 0.4rem;
+  color: var(--muted);
+  font-size: 0.78rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.card-row p {
+  margin: 0;
+  line-height: 1.55;
+  white-space: pre-wrap;
+}
+
+.card-row__actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  justify-content: center;
+}
+
+@media (max-width: 900px) {
+  .editor-layout,
+  .card-row,
+  .card-row__content {
+    grid-template-columns: 1fr;
+  }
+
+  .card-composer {
+    position: static;
+  }
+
+  .card-row__index {
+    width: 3rem;
+    height: 3rem;
+  }
+
+  .card-row__actions {
+    align-items: start;
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+}

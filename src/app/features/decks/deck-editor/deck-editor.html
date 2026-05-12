@@ -1,0 +1,117 @@
+@if (isNewDeck() || deck()) {
+  <section class="editor-layout" aria-labelledby="editor-title">
+    <div class="editor-main">
+      <p class="eyebrow">{{ isNewDeck() ? 'New deck' : 'Deck settings' }}</p>
+      <h1 id="editor-title" class="page-title">
+        {{ isNewDeck() ? 'Create a deck' : 'Edit ' + deck()?.name }}
+      </h1>
+
+      <form class="surface-panel deck-form" [formGroup]="deckForm" (ngSubmit)="saveDeck()">
+        <div class="field">
+          <label for="deck-name">Deck name</label>
+          <input id="deck-name" type="text" formControlName="name" autocomplete="off" />
+          @if (deckForm.controls.name.touched && deckForm.controls.name.invalid) {
+            <span class="field-error">Enter a deck name.</span>
+          }
+        </div>
+
+        <div class="field">
+          <label for="deck-description">Description</label>
+          <textarea id="deck-description" formControlName="description"></textarea>
+        </div>
+
+        <div class="button-row">
+          <button class="button primary" type="submit">
+            {{ isNewDeck() ? 'Create deck' : 'Save deck' }}
+          </button>
+          <a class="button" routerLink="/decks">Back to library</a>
+          @if (!isNewDeck() && deck()?.cards?.length) {
+            <a class="button accent" [routerLink]="['/study', deckId()]">Study deck</a>
+          }
+        </div>
+      </form>
+    </div>
+
+    @if (!isNewDeck()) {
+      <aside class="card-composer surface-panel" aria-labelledby="card-form-title">
+        <h2 id="card-form-title" class="section-title">
+          {{ cardBeingEdited() ? 'Edit card' : 'Add card' }}
+        </h2>
+
+        <form [formGroup]="cardForm" (ngSubmit)="saveCard()">
+          <div class="field">
+            <label for="card-front">Front</label>
+            <textarea id="card-front" formControlName="front"></textarea>
+            @if (cardForm.controls.front.touched && cardForm.controls.front.invalid) {
+              <span class="field-error">Enter the card front.</span>
+            }
+          </div>
+
+          <div class="field">
+            <label for="card-back">Back</label>
+            <textarea id="card-back" formControlName="back"></textarea>
+            @if (cardForm.controls.back.touched && cardForm.controls.back.invalid) {
+              <span class="field-error">Enter the card back.</span>
+            }
+          </div>
+
+          <div class="button-row">
+            <button class="button primary" type="submit">
+              {{ cardBeingEdited() ? 'Save card' : 'Add card' }}
+            </button>
+            @if (cardBeingEdited()) {
+              <button class="button" type="button" (click)="cancelCardEdit()">Cancel</button>
+            }
+          </div>
+        </form>
+      </aside>
+    }
+  </section>
+
+  @if (!isNewDeck()) {
+    <section class="cards-section" aria-labelledby="cards-title">
+      <div class="cards-heading">
+        <div>
+          <p class="eyebrow">Cards</p>
+          <h2 id="cards-title" class="section-title">{{ deck()?.cards?.length ?? 0 }} saved</h2>
+        </div>
+      </div>
+
+      @if (deck()?.cards?.length) {
+        <div class="card-list">
+          @for (card of deck()?.cards; track card.id; let index = $index) {
+            <article class="card-row surface-panel">
+              <div class="card-row__index" aria-label="Card number">{{ index + 1 }}</div>
+              <div class="card-row__content">
+                <div>
+                  <h3>Front</h3>
+                  <p>{{ card.front }}</p>
+                </div>
+                <div>
+                  <h3>Back</h3>
+                  <p>{{ card.back }}</p>
+                </div>
+              </div>
+              <div class="card-row__actions">
+                <button class="button" type="button" (click)="editCard(card)">Edit</button>
+                <button class="button danger" type="button" (click)="deleteCard(card)">
+                  Delete
+                </button>
+              </div>
+            </article>
+          }
+        </div>
+      } @else {
+        <div class="empty-state">
+          <p>Add at least one card before studying this deck.</p>
+        </div>
+      }
+    </section>
+  }
+} @else {
+  <section class="empty-state" aria-labelledby="missing-deck-title">
+    <h1 id="missing-deck-title" class="section-title">Deck not found</h1>
+    <p>This deck may have been deleted.</p>
+    <a class="button primary" routerLink="/decks">Back to library</a>
+  </section>
+}

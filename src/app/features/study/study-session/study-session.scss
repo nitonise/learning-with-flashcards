@@ -1,0 +1,74 @@
+.study-layout {
+  display: grid;
+  gap: 1.25rem;
+}
+
+.study-header {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 1.5rem;
+}
+
+.study-actions,
+.study-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+}
+
+.flashcard {
+  display: grid;
+  width: min(100%, 58rem);
+  min-height: clamp(20rem, 48vh, 34rem);
+  justify-self: center;
+  align-content: center;
+  justify-items: center;
+  gap: 1.2rem;
+  border: 1px solid var(--line);
+  border-top: 6px solid var(--accent);
+  padding: clamp(1.2rem, 5vw, 3rem);
+  color: var(--ink);
+  text-align: center;
+}
+
+.flashcard:hover {
+  transform: translateY(-2px);
+}
+
+.flashcard__side {
+  color: var(--accent);
+  font-size: 0.78rem;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.flashcard__text {
+  max-width: 28ch;
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: clamp(2rem, 6vw, 4.6rem);
+  line-height: 1.08;
+  white-space: pre-wrap;
+}
+
+.study-controls {
+  justify-content: center;
+}
+
+@media (max-width: 760px) {
+  .study-header {
+    align-items: start;
+    flex-direction: column;
+  }
+
+  .study-actions,
+  .study-controls {
+    width: 100%;
+  }
+
+  .study-actions .button,
+  .study-controls .button {
+    flex: 1 1 9rem;
+  }
+}

@@ -1,0 +1,61 @@
+@if (deck(); as deck) {
+  <section class="study-layout" aria-labelledby="study-title">
+    <header class="study-header">
+      <div>
+        <p class="eyebrow">Study session</p>
+        <h1 id="study-title" class="page-title">{{ deck.name }}</h1>
+      </div>
+
+      <div class="study-actions">
+        <button
+          class="button"
+          type="button"
+          [attr.aria-pressed]="isShuffled()"
+          (click)="toggleShuffle()"
+        >
+          {{ isShuffled() ? 'Sequential' : 'Shuffle' }}
+        </button>
+        <a class="button" [routerLink]="['/decks', deck.id, 'edit']">Edit deck</a>
+        <a class="button" routerLink="/decks">Library</a>
+      </div>
+    </header>
+
+    @if (studyCards().length) {
+      <button
+        class="flashcard surface-panel"
+        type="button"
+        (click)="toggleFlip()"
+        [attr.aria-label]="'Flip card. Showing ' + activeSide()"
+      >
+        <span class="flashcard__side">{{ activeSide() }}</span>
+        <span class="flashcard__text">{{ activeText() }}</span>
+      </button>
+
+      <nav class="study-controls" aria-label="Study card navigation">
+        <button class="button" type="button" [disabled]="!canMoveBack()" (click)="previousCard()">
+          Previous
+        </button>
+        <button class="button primary" type="button" (click)="toggleFlip()">Flip</button>
+        <button
+          class="button"
+          type="button"
+          [disabled]="!canMoveForward()"
+          (click)="nextCard()"
+        >
+          Next
+        </button>
+      </nav>
+    } @else {
+      <div class="empty-state">
+        <p>This deck has no cards yet.</p>
+        <a class="button primary" [routerLink]="['/decks', deck.id, 'edit']">Add cards</a>
+      </div>
+    }
+  </section>
+} @else {
+  <section class="empty-state" aria-labelledby="missing-study-title">
+    <h1 id="missing-study-title" class="section-title">Deck not found</h1>
+    <p>This study session cannot start because the deck is missing.</p>
+    <a class="button primary" routerLink="/decks">Back to library</a>
+  </section>
+}
