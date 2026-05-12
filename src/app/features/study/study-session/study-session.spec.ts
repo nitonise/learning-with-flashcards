@@ -1,11 +1,10 @@
-import { provideRouter } from '@angular/router';
-import { convertToParamMap, ActivatedRoute } from '@angular/router';
 import { TestBed } from '@angular/core/testing';
+import { ActivatedRoute, convertToParamMap, provideRouter } from '@angular/router';
 
 import { Deck, Flashcard } from '../../../core/deck.model';
 import { StudySession } from './study-session';
 
-const storageKey = 'learning-with-flashcards.decks';
+const STORAGE_KEY = 'learning-with-flashcards.decks';
 
 interface StudySessionTestApi {
   studyCards: () => Flashcard[];
@@ -42,7 +41,7 @@ function studyDeck(): Deck {
 
 describe('StudySession', () => {
   beforeEach(async () => {
-    localStorage.setItem(storageKey, JSON.stringify([studyDeck()]));
+    localStorage.setItem(STORAGE_KEY, JSON.stringify([studyDeck()]));
 
     await TestBed.configureTestingModule({
       imports: [StudySession],

@@ -39,9 +39,12 @@ export class DeckEditor {
     return id ? this.deckStore.deckById(id) : undefined;
   });
   protected readonly isNewDeck = computed(() => this.deckId() === null);
+  protected readonly cards = computed(() => this.deck()?.cards ?? []);
+  protected readonly hasCards = computed(() => this.cards().length > 0);
+  protected readonly canStudyDeck = computed(() => !this.isNewDeck() && this.hasCards());
   protected readonly cardBeingEdited = computed(() => {
     const cardId = this.editingCardId();
-    return this.deck()?.cards.find((card) => card.id === cardId);
+    return this.cards().find((card) => card.id === cardId);
   });
 
   protected readonly deckForm = this.formBuilder.nonNullable.group({

@@ -1,14 +1,14 @@
 import { Injectable, signal } from '@angular/core';
 
-export type ToastTone = 'success' | 'warning';
+type ToastTone = 'success' | 'warning';
 
-export interface ToastMessage {
+interface ToastMessage {
   readonly id: number;
   readonly text: string;
   readonly tone: ToastTone;
 }
 
-const toastDuration = 3200;
+const TOAST_DURATION = 3200;
 
 interface UnrefableTimer {
   unref(): void;
@@ -55,7 +55,7 @@ export class ToastService {
       text,
       tone,
     });
-    this.dismissHandle = setTimeout(() => this.messageState.set(null), toastDuration);
+    this.dismissHandle = setTimeout(() => this.messageState.set(null), TOAST_DURATION);
 
     unrefTimerIfPossible(this.dismissHandle);
   }

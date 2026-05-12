@@ -1,11 +1,10 @@
-import { provideRouter } from '@angular/router';
-import { convertToParamMap, ActivatedRoute } from '@angular/router';
 import { TestBed } from '@angular/core/testing';
+import { ActivatedRoute, convertToParamMap, provideRouter } from '@angular/router';
 
 import { Deck } from '../../../core/deck.model';
 import { DeckEditor } from './deck-editor';
 
-const storageKey = 'learning-with-flashcards.decks';
+const STORAGE_KEY = 'learning-with-flashcards.decks';
 
 function storedDeck(): Deck {
   const now = '2026-01-01T00:00:00.000Z';
@@ -49,7 +48,7 @@ describe('DeckEditor', () => {
   });
 
   it('shows deck form validation', async () => {
-    localStorage.setItem(storageKey, JSON.stringify([]));
+    localStorage.setItem(STORAGE_KEY, JSON.stringify([]));
 
     await configureDeckEditor();
 
@@ -65,7 +64,7 @@ describe('DeckEditor', () => {
   });
 
   it('rejects whitespace-only deck names', async () => {
-    localStorage.setItem(storageKey, JSON.stringify([]));
+    localStorage.setItem(STORAGE_KEY, JSON.stringify([]));
 
     await configureDeckEditor();
 
@@ -84,7 +83,7 @@ describe('DeckEditor', () => {
   });
 
   it('shows card form validation', async () => {
-    localStorage.setItem(storageKey, JSON.stringify([storedDeck()]));
+    localStorage.setItem(STORAGE_KEY, JSON.stringify([storedDeck()]));
 
     await configureDeckEditor({ deckId: 'deck-editor-test' });
 
@@ -101,7 +100,7 @@ describe('DeckEditor', () => {
   });
 
   it('rejects whitespace-only card sides', async () => {
-    localStorage.setItem(storageKey, JSON.stringify([storedDeck()]));
+    localStorage.setItem(STORAGE_KEY, JSON.stringify([storedDeck()]));
 
     await configureDeckEditor({ deckId: 'deck-editor-test' });
 
@@ -123,7 +122,7 @@ describe('DeckEditor', () => {
   });
 
   it('keeps dirty deck fields when cards are added', async () => {
-    localStorage.setItem(storageKey, JSON.stringify([storedDeck()]));
+    localStorage.setItem(STORAGE_KEY, JSON.stringify([storedDeck()]));
 
     await configureDeckEditor({ deckId: 'deck-editor-test' });
 

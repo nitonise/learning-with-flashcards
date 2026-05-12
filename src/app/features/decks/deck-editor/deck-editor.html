@@ -25,7 +25,7 @@
             {{ isNewDeck() ? 'Create deck' : 'Save deck' }}
           </button>
           <a class="button" routerLink="/decks">Back to library</a>
-          @if (!isNewDeck() && deck()?.cards?.length) {
+          @if (canStudyDeck()) {
             <a class="button accent" [routerLink]="['/study', deckId()]">Study deck</a>
           }
         </div>
@@ -73,13 +73,13 @@
       <div class="cards-heading">
         <div>
           <p class="eyebrow">Cards</p>
-          <h2 id="cards-title" class="section-title">{{ deck()?.cards?.length ?? 0 }} saved</h2>
+          <h2 id="cards-title" class="section-title">{{ cards().length }} saved</h2>
         </div>
       </div>
 
-      @if (deck()?.cards?.length) {
+      @if (hasCards()) {
         <div class="card-list">
-          @for (card of deck()?.cards; track card.id; let index = $index) {
+          @for (card of cards(); track card.id; let index = $index) {
             <article class="card-row surface-panel">
               <div class="card-row__index" aria-label="Card number">{{ index + 1 }}</div>
               <div class="card-row__content">

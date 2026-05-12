@@ -1,9 +1,9 @@
-import { provideRouter } from '@angular/router';
 import { TestBed } from '@angular/core/testing';
+import { provideRouter } from '@angular/router';
 
 import { DeckLibrary } from './deck-library';
 
-const storageKey = 'learning-with-flashcards.decks';
+const STORAGE_KEY = 'learning-with-flashcards.decks';
 
 describe('DeckLibrary', () => {
   afterEach(() => {
@@ -12,7 +12,7 @@ describe('DeckLibrary', () => {
   });
 
   it('renders an empty state', async () => {
-    localStorage.setItem(storageKey, JSON.stringify([]));
+    localStorage.setItem(STORAGE_KEY, JSON.stringify([]));
 
     await TestBed.configureTestingModule({
       imports: [DeckLibrary],

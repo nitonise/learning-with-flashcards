@@ -3,7 +3,7 @@ import { TestBed } from '@angular/core/testing';
 import { DeckStore } from './deck-store';
 import { Deck } from './deck.model';
 
-const storageKey = 'learning-with-flashcards.decks';
+const STORAGE_KEY = 'learning-with-flashcards.decks';
 
 function testDeck(): Deck {
   const now = new Date('2026-01-01T00:00:00.000Z').toISOString();
@@ -45,7 +45,7 @@ describe('DeckStore', () => {
   });
 
   it('loads existing saved data', () => {
-    localStorage.setItem(storageKey, JSON.stringify([testDeck()]));
+    localStorage.setItem(STORAGE_KEY, JSON.stringify([testDeck()]));
 
     const store = TestBed.inject(DeckStore);
 
@@ -54,7 +54,7 @@ describe('DeckStore', () => {
   });
 
   it('rejects invalid persisted data by falling back safely', () => {
-    localStorage.setItem(storageKey, JSON.stringify([{ id: 'broken' }]));
+    localStorage.setItem(STORAGE_KEY, JSON.stringify([{ id: 'broken' }]));
 
     const store = TestBed.inject(DeckStore);
 
@@ -63,7 +63,7 @@ describe('DeckStore', () => {
   });
 
   it('creates, updates, and deletes decks', () => {
-    localStorage.setItem(storageKey, JSON.stringify([]));
+    localStorage.setItem(STORAGE_KEY, JSON.stringify([]));
 
     const store = TestBed.inject(DeckStore);
     const deck = store.createDeck(' Biology ', ' Cells ');
@@ -78,7 +78,7 @@ describe('DeckStore', () => {
   });
 
   it('creates, updates, and deletes cards', () => {
-    localStorage.setItem(storageKey, JSON.stringify([]));
+    localStorage.setItem(STORAGE_KEY, JSON.stringify([]));
 
     const store = TestBed.inject(DeckStore);
     const deck = store.createDeck('History', '');

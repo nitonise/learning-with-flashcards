@@ -95,7 +95,7 @@ export class DeckStore {
   readonly totalCards = computed(() =>
     this.decksState().reduce((total, deck) => total + deck.cards.length, 0),
   );
-  readonly deckLookup = computed(
+  private readonly deckLookup = computed(
     () => new Map(this.decksState().map((deck) => [deck.id, deck] as const)),
   );
 
