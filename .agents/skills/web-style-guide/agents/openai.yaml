@@ -1,0 +1,4 @@
+interface:
+  display_name: "Web Style Guide"
+  short_description: "Angular, TypeScript, HTML, and CSS style rules"
+  default_prompt: "Use $web-style-guide to review this Angular, TypeScript, HTML, and CSS code for style-guide compliance."
