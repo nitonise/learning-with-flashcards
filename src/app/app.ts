@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/c
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 
 import { DeckStore } from './core/deck-store';
+import { ThemeService } from './core/theme';
 import { Toast } from './shared/toast/toast';
 
 @Component({
@@ -13,6 +14,7 @@ import { Toast } from './shared/toast/toast';
 })
 export class App {
   private readonly deckStore = inject(DeckStore);
+  protected readonly themeService = inject(ThemeService);
 
   protected readonly deckCount = computed(() => this.deckStore.decks().length);
   protected readonly cardCount = this.deckStore.totalCards;

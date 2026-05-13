@@ -12,7 +12,42 @@
   --success: #356443;
   --success-bg: #edf7ef;
   --focus: #bd7c00;
+  --field-bg: #ffffff;
+  --on-strong: #ffffff;
+  --topbar-bg: rgba(247, 246, 241, 0.94);
+  --subtle-panel: rgba(255, 255, 255, 0.56);
+  --empty-bg: rgba(255, 255, 255, 0.62);
+  --card-actions-bg: rgba(247, 246, 241, 0.66);
+  --toast-action-bg: rgba(255, 255, 255, 0.52);
+  --grid-line: rgba(12, 49, 73, 0.04);
+  --grid-line-strong: rgba(12, 49, 73, 0.05);
   --shadow: 0 18px 44px rgba(24, 37, 43, 0.12);
+}
+
+:root[data-theme='dark'] {
+  color-scheme: dark;
+  --surface: #101719;
+  --panel: #172225;
+  --ink: #f3efe4;
+  --muted: #b4c0bd;
+  --line: #344348;
+  --accent: #54c2b5;
+  --accent-dark: #8ddbd0;
+  --warning: #ff9c78;
+  --warning-bg: #35211b;
+  --success: #75c08c;
+  --success-bg: #1b2d23;
+  --focus: #f3bc4c;
+  --field-bg: #111b1e;
+  --on-strong: #071113;
+  --topbar-bg: rgba(16, 23, 25, 0.94);
+  --subtle-panel: rgba(255, 255, 255, 0.07);
+  --empty-bg: rgba(255, 255, 255, 0.05);
+  --card-actions-bg: rgba(255, 255, 255, 0.05);
+  --toast-action-bg: rgba(255, 255, 255, 0.08);
+  --grid-line: rgba(141, 219, 208, 0.05);
+  --grid-line-strong: rgba(141, 219, 208, 0.07);
+  --shadow: 0 22px 52px rgba(0, 0, 0, 0.35);
 }
 
 * {
@@ -118,7 +153,7 @@ button:disabled {
 .field textarea {
   width: 100%;
   border: 1px solid var(--line);
-  background: #ffffff;
+  background: var(--field-bg);
   color: var(--ink);
   padding: 0.72rem 0.78rem;
 }
@@ -158,13 +193,13 @@ button:disabled {
 
 .button.primary {
   background: var(--ink);
-  color: #ffffff;
+  color: var(--surface);
 }
 
 .button.accent {
   border-color: var(--accent-dark);
   background: var(--accent);
-  color: #ffffff;
+  color: var(--on-strong);
 }
 
 .button.danger {
@@ -186,7 +221,7 @@ button:disabled {
   justify-items: start;
   padding: clamp(1.2rem, 4vw, 2rem);
   border: 1px dashed var(--line);
-  background: rgba(255, 255, 255, 0.62);
+  background: var(--empty-bg);
 }
 
 .empty-state p {
