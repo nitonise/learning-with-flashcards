@@ -8,8 +8,9 @@
 
 .deck-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr));
+  grid-template-columns: repeat(auto-fill, 22rem);
   gap: 1rem;
+  justify-content: start;
 }
 
 .deck-card {
@@ -41,7 +42,7 @@ mat-card-content p {
 
 .deck-card__actions {
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   gap: 0.55rem;
   padding: 1rem 1.15rem 1.15rem;
   border-top: 1px solid var(--line);
@@ -56,5 +57,15 @@ mat-card-content p {
   .library-hero {
     align-items: start;
     flex-direction: column;
+  }
+}
+
+@media (max-width: 400px) {
+  .deck-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .deck-card__actions {
+    flex-wrap: wrap;
   }
 }
