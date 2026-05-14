@@ -198,25 +198,34 @@ textarea:focus-visible,
 }
 
 .page-title {
+  min-width: 0;
   margin: 0;
   font-family: Georgia, 'Times New Roman', serif;
   font-size: clamp(2rem, 5vw, 4.4rem);
   line-height: 0.98;
+  overflow-wrap: anywhere;
+  hyphens: auto;
 }
 
 .page-copy {
+  min-width: 0;
   max-width: 62ch;
   margin: 0.75rem 0 0;
   color: var(--muted);
   font-size: 1.02rem;
   line-height: 1.7;
+  overflow-wrap: anywhere;
+  hyphens: auto;
 }
 
 .section-title {
+  min-width: 0;
   margin: 0;
   font-family: Georgia, 'Times New Roman', serif;
   font-size: 1.55rem;
   line-height: 1.1;
+  overflow-wrap: anywhere;
+  hyphens: auto;
 }
 
 .muted {

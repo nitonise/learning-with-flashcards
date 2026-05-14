@@ -10,6 +10,10 @@
   gap: 1.5rem;
 }
 
+.study-header > div {
+  min-width: 0;
+}
+
 .study-actions,
 .study-controls {
   display: flex;
@@ -38,6 +42,7 @@
 .flashcard {
   display: grid;
   width: min(100%, 58rem);
+  min-width: 0;
   min-height: clamp(20rem, 48vh, 34rem);
   justify-self: center;
   align-content: center;
@@ -65,11 +70,14 @@
 }
 
 .flashcard__text {
-  max-width: 28ch;
+  min-width: 0;
+  max-width: min(100%, 28ch);
   font-family: Georgia, 'Times New Roman', serif;
   font-size: clamp(2rem, 6vw, 4.6rem);
   line-height: 1.08;
+  overflow-wrap: anywhere;
   white-space: pre-wrap;
+  hyphens: auto;
 }
 
 .study-controls {

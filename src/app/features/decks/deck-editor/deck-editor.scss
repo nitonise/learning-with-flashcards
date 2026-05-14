@@ -5,8 +5,14 @@
   align-items: start;
 }
 
+.editor-main,
+.cards-heading > div {
+  min-width: 0;
+}
+
 .deck-form-card,
 .card-composer {
+  min-width: 0;
   padding: clamp(1rem, 3vw, 1.4rem);
   background: var(--panel);
   box-shadow: var(--shadow);
@@ -63,6 +69,7 @@ textarea {
   grid-template-columns: 3rem minmax(0, 1fr) auto;
   gap: 1rem;
   align-items: stretch;
+  min-width: 0;
   padding: 0.9rem;
   background: var(--panel);
   box-shadow: var(--shadow);
@@ -83,6 +90,11 @@ textarea {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 0.75rem;
+  min-width: 0;
+}
+
+.card-row__content > div {
+  min-width: 0;
 }
 
 .card-row h3 {
@@ -96,7 +108,9 @@ textarea {
 .card-row p {
   margin: 0;
   line-height: 1.55;
+  overflow-wrap: anywhere;
   white-space: pre-wrap;
+  hyphens: auto;
 }
 
 .card-row__actions {

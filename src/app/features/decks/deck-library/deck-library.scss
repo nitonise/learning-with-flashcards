@@ -6,20 +6,30 @@
   margin-bottom: clamp(1.5rem, 4vw, 2.5rem);
 }
 
+.library-hero > div {
+  min-width: 0;
+}
+
 .deck-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, 22rem);
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 18rem), 22rem));
   gap: 1rem;
   justify-content: start;
 }
 
 .deck-card {
   display: grid;
+  min-width: 0;
   min-height: 17rem;
   grid-template-rows: 1fr auto;
   border-top: 5px solid var(--accent);
   background: var(--panel);
   box-shadow: var(--shadow);
+}
+
+mat-card-header,
+mat-card-content {
+  min-width: 0;
 }
 
 mat-card-subtitle {
@@ -31,18 +41,23 @@ mat-card-subtitle {
 }
 
 mat-card-title {
+  min-width: 0;
   font-family: Georgia, 'Times New Roman', serif;
   font-size: 1.7rem;
   line-height: 1.08;
+  overflow-wrap: anywhere;
+  hyphens: auto;
 }
 
 mat-card-content p {
   line-height: 1.55;
+  overflow-wrap: anywhere;
+  hyphens: auto;
 }
 
 .deck-card__actions {
   display: flex;
-  flex-wrap: nowrap;
+  flex-wrap: wrap;
   gap: 0.55rem;
   padding: 1rem 1.15rem 1.15rem;
   border-top: 1px solid var(--line);
@@ -63,9 +78,5 @@ mat-card-content p {
 @media (max-width: 400px) {
   .deck-grid {
     grid-template-columns: 1fr;
-  }
-
-  .deck-card__actions {
-    flex-wrap: wrap;
   }
 }
