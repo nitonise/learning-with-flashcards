@@ -3,16 +3,15 @@ import { provideRouter } from '@angular/router';
 
 import { DeckLibrary } from './deck-library';
 
-const STORAGE_KEY = 'learning-with-flashcards.decks';
-
 describe('DeckLibrary', () => {
   afterEach(() => {
+    vi.unstubAllGlobals();
     localStorage.clear();
     TestBed.resetTestingModule();
   });
 
   it('renders an empty state', async () => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify([]));
+    vi.stubGlobal('confirm', () => true);
 
     await TestBed.configureTestingModule({
       imports: [DeckLibrary],
@@ -23,6 +22,11 @@ describe('DeckLibrary', () => {
     fixture.detectChanges();
 
     const compiled = fixture.nativeElement as HTMLElement;
+    const deleteButton = compiled.querySelector('.button.danger') as HTMLButtonElement;
+
+    deleteButton.click();
+    fixture.detectChanges();
+
     expect(compiled.textContent).toContain('No decks yet');
   });
 

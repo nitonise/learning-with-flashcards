@@ -3,6 +3,7 @@ import { computed, Injectable, signal } from '@angular/core';
 import { Deck, Flashcard } from './deck.model';
 
 const STORAGE_KEY = 'learning-with-flashcards.decks';
+const STORAGE_INITIALIZED_KEY = 'learning-with-flashcards.decks.initialized';
 
 function createSampleDeck(now: string): Deck {
   return {
@@ -245,6 +246,11 @@ export class DeckStore {
         return undefined;
       }
 
+      if (parsed.length === 0 && !this.hasInitializedStorage()) {
+        return undefined;
+      }
+
+      this.markStorageInitialized();
       return parsed;
     } catch {
       return undefined;
@@ -259,6 +265,19 @@ export class DeckStore {
   private writeDecks(decks: Deck[]): void {
     try {
       globalThis.localStorage?.setItem(STORAGE_KEY, JSON.stringify(decks));
+      this.markStorageInitialized();
+    } catch {
+      return;
+    }
+  }
+
+  private hasInitializedStorage(): boolean {
+    return globalThis.localStorage?.getItem(STORAGE_INITIALIZED_KEY) === 'true';
+  }
+
+  private markStorageInitialized(): void {
+    try {
+      globalThis.localStorage?.setItem(STORAGE_INITIALIZED_KEY, 'true');
     } catch {
       return;
     }

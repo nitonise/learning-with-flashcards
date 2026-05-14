@@ -44,6 +44,29 @@ describe('DeckStore', () => {
     expect(store.decks()[0].cards.length).toBeGreaterThan(0);
   });
 
+  it('seeds sample data when legacy saved storage has no decks', () => {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify([]));
+
+    const store = TestBed.inject(DeckStore);
+
+    expect(store.decks()).toHaveLength(1);
+    expect(store.decks()[0].name).toBe('Study Basics');
+    expect(localStorage.getItem(STORAGE_KEY)).toContain('Study Basics');
+  });
+
+  it('preserves a deliberately empty deck library after reload', () => {
+    const store = TestBed.inject(DeckStore);
+
+    store.deleteDeck(store.decks()[0].id);
+    expect(store.decks()).toEqual([]);
+
+    TestBed.resetTestingModule();
+    TestBed.configureTestingModule({});
+
+    const reloadedStore = TestBed.inject(DeckStore);
+    expect(reloadedStore.decks()).toEqual([]);
+  });
+
   it('loads existing saved data', () => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify([testDeck()]));
 
