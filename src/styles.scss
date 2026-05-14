@@ -1,3 +1,5 @@
+@use '@angular/material' as mat;
+
 :root {
   color-scheme: light;
   --surface: #f7f6f1;
@@ -12,19 +14,71 @@
   --success: #356443;
   --success-bg: #edf7ef;
   --focus: #bd7c00;
-  --field-bg: #ffffff;
   --on-strong: #ffffff;
   --topbar-bg: rgba(247, 246, 241, 0.94);
   --subtle-panel: rgba(255, 255, 255, 0.56);
   --empty-bg: rgba(255, 255, 255, 0.62);
   --card-actions-bg: rgba(247, 246, 241, 0.66);
-  --toast-action-bg: rgba(255, 255, 255, 0.52);
   --grid-line: rgba(12, 49, 73, 0.04);
   --grid-line-strong: rgba(12, 49, 73, 0.05);
   --shadow: 0 18px 44px rgba(24, 37, 43, 0.12);
+
+  @include mat.theme(
+    (
+      color: (
+        primary: mat.$cyan-palette,
+        tertiary: mat.$green-palette,
+        theme-type: color-scheme,
+      ),
+      typography: (
+        plain-family: (
+          'Aptos',
+          'Segoe UI',
+          system-ui,
+          -apple-system,
+          sans-serif,
+        ),
+        brand-family: (
+          Georgia,
+          'Times New Roman',
+          serif,
+        ),
+        regular-weight: 400,
+        medium-weight: 700,
+        bold-weight: 800,
+      ),
+      density: 0,
+    )
+  );
+
+  @include mat.theme-overrides(
+    (
+      primary: var(--accent),
+      on-primary: var(--on-strong),
+      primary-container: var(--accent),
+      on-primary-container: var(--on-strong),
+      secondary: var(--accent-dark),
+      tertiary: var(--success),
+      error: var(--warning),
+      surface: var(--surface),
+      surface-container-lowest: var(--surface),
+      surface-container-low: var(--panel),
+      surface-container: var(--panel),
+      surface-container-high: var(--panel),
+      surface-container-highest: var(--panel),
+      on-surface: var(--ink),
+      on-surface-variant: var(--muted),
+      outline: var(--line),
+      outline-variant: var(--line),
+      inverse-surface: var(--ink),
+      inverse-on-surface: var(--surface),
+      surface-tint: var(--accent),
+    )
+  );
 }
 
-:root[data-theme='dark'] {
+:root[data-theme='dark'],
+.cdk-overlay-container[data-theme='dark'] {
   color-scheme: dark;
   --surface: #101719;
   --panel: #172225;
@@ -38,13 +92,11 @@
   --success: #75c08c;
   --success-bg: #1b2d23;
   --focus: #f3bc4c;
-  --field-bg: #111b1e;
   --on-strong: #071113;
   --topbar-bg: rgba(16, 23, 25, 0.94);
   --subtle-panel: rgba(255, 255, 255, 0.07);
   --empty-bg: rgba(255, 255, 255, 0.05);
   --card-actions-bg: rgba(255, 255, 255, 0.05);
-  --toast-action-bg: rgba(255, 255, 255, 0.08);
   --grid-line: rgba(141, 219, 208, 0.05);
   --grid-line-strong: rgba(141, 219, 208, 0.07);
   --shadow: 0 22px 52px rgba(0, 0, 0, 0.35);
@@ -56,12 +108,6 @@
 
 html {
   min-height: 100%;
-  font-family:
-    'Aptos',
-    'Segoe UI',
-    system-ui,
-    -apple-system,
-    sans-serif;
   background: var(--surface);
   color: var(--ink);
 }
@@ -69,27 +115,13 @@ html {
 body {
   min-height: 100%;
   margin: 0;
+  background: var(--surface);
+  color: var(--ink);
+  font-family: var(--mat-sys-body-medium-font);
 }
 
-button,
-input,
-textarea {
-  font: inherit;
-}
-
-button,
-a,
-input,
-textarea {
-  border-radius: 0;
-}
-
-button:focus-visible,
-a:focus-visible,
-input:focus-visible,
-textarea:focus-visible {
-  outline: 3px solid var(--focus);
-  outline-offset: 3px;
+a {
+  color: inherit;
 }
 
 button {
@@ -98,7 +130,62 @@ button {
 
 button:disabled {
   cursor: not-allowed;
-  opacity: 0.58;
+}
+
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+.mat-mdc-button-base:focus-visible,
+.mat-button-toggle-button:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 3px;
+}
+
+.mat-mdc-unelevated-button:not(:disabled) {
+  --mdc-filled-button-container-color: var(--ink);
+  --mdc-filled-button-label-text-color: var(--surface);
+}
+
+.mat-mdc-outlined-button:not(:disabled) {
+  --mdc-outlined-button-outline-color: var(--line);
+  --mdc-outlined-button-label-text-color: var(--ink);
+}
+
+.mat-mdc-button:not(:disabled) {
+  --mdc-text-button-label-text-color: var(--ink);
+}
+
+.mat-mdc-card {
+  --mdc-elevated-card-container-color: var(--panel);
+  --mdc-outlined-card-container-color: var(--panel);
+  --mdc-outlined-card-outline-color: var(--line);
+}
+
+.mat-icon,
+.material-icons {
+  direction: ltr;
+  display: inline-block;
+  font-family: 'Material Icons';
+  font-feature-settings: 'liga';
+  font-size: 24px;
+  font-style: normal;
+  font-weight: normal;
+  letter-spacing: normal;
+  line-height: 1;
+  text-transform: none;
+  white-space: nowrap;
+  word-wrap: normal;
+  -webkit-font-feature-settings: 'liga';
+  -webkit-font-smoothing: antialiased;
+}
+
+.mat-button-toggle-appearance-standard {
+  --mat-standard-button-toggle-background-color: var(--panel);
+  --mat-standard-button-toggle-selected-state-background-color: var(--accent);
+  --mat-standard-button-toggle-selected-state-text-color: var(--on-strong);
+  --mat-standard-button-toggle-divider-color: var(--line);
+  --mat-standard-button-toggle-text-color: var(--ink);
 }
 
 .eyebrow {
@@ -125,90 +212,11 @@ button:disabled {
   line-height: 1.7;
 }
 
-.surface-panel {
-  border: 1px solid var(--line);
-  background: var(--panel);
-  box-shadow: var(--shadow);
-}
-
 .section-title {
   margin: 0;
   font-family: Georgia, 'Times New Roman', serif;
   font-size: 1.55rem;
   line-height: 1.1;
-}
-
-.field {
-  display: grid;
-  gap: 0.45rem;
-}
-
-.field label {
-  color: var(--ink);
-  font-size: 0.92rem;
-  font-weight: 800;
-}
-
-.field input,
-.field textarea {
-  width: 100%;
-  border: 1px solid var(--line);
-  background: var(--field-bg);
-  color: var(--ink);
-  padding: 0.72rem 0.78rem;
-}
-
-.field textarea {
-  min-height: 7.2rem;
-  resize: vertical;
-}
-
-.field-error {
-  color: var(--warning);
-  font-size: 0.86rem;
-  font-weight: 700;
-}
-
-.button-row {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.6rem;
-  align-items: center;
-}
-
-.button {
-  display: inline-flex;
-  min-height: 2.5rem;
-  align-items: center;
-  justify-content: center;
-  gap: 0.45rem;
-  border: 1px solid var(--ink);
-  background: var(--panel);
-  color: var(--ink);
-  padding: 0.58rem 0.85rem;
-  font-weight: 800;
-  line-height: 1.2;
-  text-decoration: none;
-}
-
-.button.primary {
-  background: var(--ink);
-  color: var(--surface);
-}
-
-.button.accent {
-  border-color: var(--accent-dark);
-  background: var(--accent);
-  color: var(--on-strong);
-}
-
-.button.danger {
-  border-color: var(--warning);
-  color: var(--warning);
-}
-
-.button:hover:not(:disabled) {
-  transform: translateY(-1px);
 }
 
 .muted {
@@ -228,4 +236,20 @@ button:disabled {
   margin: 0;
   color: var(--muted);
   line-height: 1.6;
+}
+
+.app-snack {
+  --mdc-snackbar-container-color: var(--success-bg);
+  --mdc-snackbar-supporting-text-color: var(--ink);
+  --mat-snack-bar-button-color: var(--success);
+}
+
+.app-snack--warning {
+  --mdc-snackbar-container-color: var(--warning-bg);
+  --mat-snack-bar-button-color: var(--warning);
+}
+
+.app-confirm-dialog-panel .mat-mdc-dialog-surface {
+  background: var(--panel);
+  color: var(--ink);
 }

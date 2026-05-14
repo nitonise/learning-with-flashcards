@@ -15,12 +15,24 @@
   display: flex;
   flex-wrap: wrap;
   gap: 0.6rem;
+  align-items: center;
 }
 
-.study-actions .button[aria-pressed='true'] {
-  border-color: var(--accent-dark);
+.study-actions .is-active {
+  --mdc-outlined-button-outline-color: var(--accent-dark);
+  --mdc-outlined-button-label-text-color: var(--on-strong);
+  --mat-icon-color: var(--on-strong);
+
   background: var(--accent);
   color: var(--on-strong);
+}
+
+.study-actions .is-active mat-icon {
+  color: var(--on-strong);
+}
+
+.study-toggles {
+  background: var(--panel);
 }
 
 .flashcard {
@@ -33,6 +45,8 @@
   gap: 1.2rem;
   border: 1px solid var(--line);
   border-top: 6px solid var(--accent);
+  background: var(--panel);
+  box-shadow: var(--shadow);
   padding: clamp(1.2rem, 5vw, 3rem);
   color: var(--ink);
   text-align: center;
@@ -73,8 +87,8 @@
     width: 100%;
   }
 
-  .study-actions .button,
-  .study-controls .button {
+  .study-actions > *,
+  .study-controls > * {
     flex: 1 1 9rem;
   }
 }

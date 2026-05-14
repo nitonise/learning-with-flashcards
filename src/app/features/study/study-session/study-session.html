@@ -9,64 +9,72 @@
       <div class="study-actions">
         @if (activeCard()) {
           <button
-            class="button"
+            mat-stroked-button
             type="button"
+            [class.is-active]="activeCardIsDifficult()"
             [attr.aria-pressed]="activeCardIsDifficult()"
             (click)="toggleActiveCardDifficult()"
           >
+            <mat-icon aria-hidden="true">{{
+              activeCardIsDifficult() ? 'bookmark' : 'bookmark_add'
+            }}</mat-icon>
             {{ activeCardIsDifficult() ? 'Marked difficult' : 'Mark difficult' }}
           </button>
         }
-        <button
-          class="button"
-          type="button"
-          [attr.aria-pressed]="showDifficultOnly()"
-          [disabled]="difficultCount() === 0"
-          (click)="toggleDifficultOnly()"
-        >
-          Difficult only ({{ difficultCount() }})
-        </button>
-        <button
-          class="button"
-          type="button"
-          [attr.aria-pressed]="isShuffled()"
-          (click)="toggleShuffle()"
-        >
-          {{ isShuffled() ? 'Sequential' : 'Shuffle' }}
-        </button>
-        <a class="button" [routerLink]="['/decks', deck.id, 'edit']">Edit deck</a>
-        <a class="button" routerLink="/decks">Library</a>
+        <mat-button-toggle-group multiple class="study-toggles" aria-label="Study mode options">
+          <mat-button-toggle
+            [checked]="showDifficultOnly()"
+            [disabled]="difficultCount() === 0"
+            (change)="toggleDifficultOnly()"
+          >
+            Difficult only ({{ difficultCount() }})
+          </mat-button-toggle>
+          <mat-button-toggle [checked]="isShuffled()" (change)="toggleShuffle()">
+            {{ isShuffled() ? 'Sequential' : 'Shuffle' }}
+          </mat-button-toggle>
+        </mat-button-toggle-group>
+        <a mat-button [routerLink]="['/decks', deck.id, 'edit']">
+          <mat-icon aria-hidden="true">edit</mat-icon>
+          Edit deck
+        </a>
+        <a mat-button routerLink="/decks">
+          <mat-icon aria-hidden="true">view_list</mat-icon>
+          Library
+        </a>
       </div>
     </header>
 
     @if (studyCards().length) {
-      <button
-        class="flashcard surface-panel"
-        type="button"
-        (click)="toggleFlip()"
-      >
+      <button class="flashcard" type="button" (click)="toggleFlip()">
         <span class="flashcard__side">{{ activeSide() }}</span>
         <span class="flashcard__text">{{ activeText() }}</span>
       </button>
 
       <nav class="study-controls" aria-label="Study card navigation">
-        <button class="button" type="button" [disabled]="!canMoveBack()" (click)="previousCard()">
+        <button
+          mat-stroked-button
+          type="button"
+          [disabled]="!canMoveBack()"
+          (click)="previousCard()"
+        >
+          <mat-icon aria-hidden="true">chevron_left</mat-icon>
           Previous
         </button>
-        <button class="button primary" type="button" (click)="toggleFlip()">Flip</button>
+        <button mat-flat-button type="button" (click)="toggleFlip()">Flip</button>
         <button
-          class="button"
+          mat-stroked-button
           type="button"
           [disabled]="!canMoveForward()"
           (click)="nextCard()"
         >
           Next
+          <mat-icon aria-hidden="true">chevron_right</mat-icon>
         </button>
       </nav>
     } @else {
       <div class="empty-state">
         <p>This deck has no cards yet.</p>
-        <a class="button primary" [routerLink]="['/decks', deck.id, 'edit']">Add cards</a>
+        <a mat-flat-button [routerLink]="['/decks', deck.id, 'edit']">Add cards</a>
       </div>
     }
   </section>
@@ -74,6 +82,6 @@
   <section class="empty-state" aria-labelledby="missing-study-title">
     <h1 id="missing-study-title" class="section-title">Deck not found</h1>
     <p>This study session cannot start because the deck is missing.</p>
-    <a class="button primary" routerLink="/decks">Back to library</a>
+    <a mat-flat-button routerLink="/decks">Back to library</a>
   </section>
 }

@@ -17,14 +17,11 @@
   min-height: 17rem;
   grid-template-rows: 1fr auto;
   border-top: 5px solid var(--accent);
+  background: var(--panel);
+  box-shadow: var(--shadow);
 }
 
-.deck-card__body {
-  padding: 1.15rem;
-}
-
-.deck-card__meta {
-  margin: 0 0 1rem;
+mat-card-subtitle {
   color: var(--accent);
   font-size: 0.78rem;
   font-weight: 900;
@@ -32,14 +29,13 @@
   text-transform: uppercase;
 }
 
-.deck-card h2 {
-  margin: 0;
+mat-card-title {
   font-family: Georgia, 'Times New Roman', serif;
   font-size: 1.7rem;
   line-height: 1.08;
 }
 
-.deck-card p {
+mat-card-content p {
   line-height: 1.55;
 }
 
@@ -50,6 +46,10 @@
   padding: 1rem 1.15rem 1.15rem;
   border-top: 1px solid var(--line);
   background: var(--card-actions-bg);
+}
+
+.danger-action {
+  color: var(--warning);
 }
 
 @media (max-width: 680px) {

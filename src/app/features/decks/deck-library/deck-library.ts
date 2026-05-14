@@ -1,17 +1,22 @@
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
+import { MatIconModule } from '@angular/material/icon';
 import { RouterLink } from '@angular/router';
 
+import { ConfirmDialogService } from '../../../core/confirm-dialog';
 import { DeckStore } from '../../../core/deck-store';
 import { ToastService } from '../../../core/toast';
 
 @Component({
   selector: 'app-deck-library',
-  imports: [RouterLink],
+  imports: [MatButtonModule, MatCardModule, MatIconModule, RouterLink],
   templateUrl: './deck-library.html',
   styleUrl: './deck-library.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DeckLibrary {
+  private readonly confirmDialog = inject(ConfirmDialogService);
   private readonly deckStore = inject(DeckStore);
   private readonly toast = inject(ToastService);
 
@@ -19,11 +24,20 @@ export class DeckLibrary {
   protected readonly hasDecks = computed(() => this.decks().length > 0);
 
   protected deleteDeck(deckId: string, deckName: string): void {
-    const confirmed = globalThis.confirm?.(`Delete "${deckName}" and all of its cards?`) ?? false;
+    this.confirmDialog
+      .confirm({
+        title: 'Delete deck?',
+        message: `Delete "${deckName}" and all of its cards?`,
+        confirmLabel: 'Delete',
+        tone: 'danger',
+      })
+      .subscribe((confirmed) => {
+        if (!confirmed) {
+          return;
+        }
 
-    if (confirmed) {
-      this.deckStore.deleteDeck(deckId);
-      this.toast.success('Deck deleted.');
-    }
+        this.deckStore.deleteDeck(deckId);
+        this.toast.success('Deck deleted.');
+      });
   }
 }

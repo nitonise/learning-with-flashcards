@@ -5,21 +5,40 @@
   align-items: start;
 }
 
-.deck-form,
+.deck-form-card,
 .card-composer {
+  padding: clamp(1rem, 3vw, 1.4rem);
+  background: var(--panel);
+  box-shadow: var(--shadow);
+}
+
+.deck-form,
+.card-composer form {
   display: grid;
   gap: 1rem;
-  padding: clamp(1rem, 3vw, 1.4rem);
 }
 
 .card-composer {
+  display: grid;
+  gap: 1rem;
   position: sticky;
   top: 6rem;
 }
 
-.card-composer form {
-  display: grid;
-  gap: 1rem;
+.action-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  align-items: center;
+}
+
+mat-form-field {
+  width: 100%;
+}
+
+textarea {
+  min-height: 7.2rem;
+  resize: vertical;
 }
 
 .cards-section {
@@ -45,6 +64,8 @@
   gap: 1rem;
   align-items: stretch;
   padding: 0.9rem;
+  background: var(--panel);
+  box-shadow: var(--shadow);
 }
 
 .card-row__index {
@@ -83,6 +104,10 @@
   flex-direction: column;
   gap: 0.5rem;
   justify-content: center;
+}
+
+.danger-action {
+  color: var(--warning);
 }
 
 @media (max-width: 900px) {

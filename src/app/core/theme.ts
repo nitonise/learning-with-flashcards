@@ -1,12 +1,6 @@
 import { DOCUMENT, isPlatformBrowser } from '@angular/common';
-import {
-  computed,
-  effect,
-  inject,
-  Injectable,
-  PLATFORM_ID,
-  signal,
-} from '@angular/core';
+import { OverlayContainer } from '@angular/cdk/overlay';
+import { computed, effect, inject, Injectable, PLATFORM_ID, signal } from '@angular/core';
 
 export type Theme = 'light' | 'dark';
 
@@ -17,6 +11,7 @@ const storageKey = 'flashcards.theme';
 })
 export class ThemeService {
   private readonly document = inject(DOCUMENT);
+  private readonly overlayContainer = inject(OverlayContainer, { optional: true });
   private readonly isBrowser = isPlatformBrowser(inject(PLATFORM_ID));
   private readonly selectedTheme = signal<Theme>(this.getInitialTheme());
 
@@ -29,6 +24,7 @@ export class ThemeService {
 
       this.document.documentElement.setAttribute('data-theme', theme);
       this.document.documentElement.style.colorScheme = theme;
+      this.syncOverlayTheme(theme);
       this.storeTheme(theme);
     });
   }
@@ -75,6 +71,16 @@ export class ThemeService {
     } catch {
       return;
     }
+  }
+
+  private syncOverlayTheme(theme: Theme): void {
+    if (!this.isBrowser || !this.overlayContainer) {
+      return;
+    }
+
+    const overlayElement = this.overlayContainer.getContainerElement();
+    overlayElement.setAttribute('data-theme', theme);
+    overlayElement.style.colorScheme = theme;
   }
 
   private prefersDarkTheme(): boolean {

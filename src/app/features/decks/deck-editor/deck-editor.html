@@ -6,65 +6,70 @@
         {{ isNewDeck() ? 'Create a deck' : 'Edit ' + deck()?.name }}
       </h1>
 
-      <form class="surface-panel deck-form" [formGroup]="deckForm" (ngSubmit)="saveDeck()">
-        <div class="field">
-          <label for="deck-name">Deck name</label>
-          <input id="deck-name" type="text" formControlName="name" autocomplete="off" />
-          @if (deckForm.controls.name.touched && deckForm.controls.name.invalid) {
-            <span class="field-error">Enter a deck name.</span>
-          }
-        </div>
+      <mat-card class="deck-form-card" appearance="outlined">
+        <form class="deck-form" [formGroup]="deckForm" (ngSubmit)="saveDeck()">
+          <mat-form-field appearance="outline">
+            <mat-label>Deck name</mat-label>
+            <input id="deck-name" matInput type="text" formControlName="name" autocomplete="off" />
+            @if (deckForm.controls.name.touched && deckForm.controls.name.invalid) {
+              <mat-error>Enter a deck name.</mat-error>
+            }
+          </mat-form-field>
 
-        <div class="field">
-          <label for="deck-description">Description</label>
-          <textarea id="deck-description" formControlName="description"></textarea>
-        </div>
+          <mat-form-field appearance="outline">
+            <mat-label>Description</mat-label>
+            <textarea id="deck-description" matInput formControlName="description"></textarea>
+          </mat-form-field>
 
-        <div class="button-row">
-          <button class="button primary" type="submit">
-            {{ isNewDeck() ? 'Create deck' : 'Save deck' }}
-          </button>
-          <a class="button" routerLink="/decks">Back to library</a>
-          @if (canStudyDeck()) {
-            <a class="button accent" [routerLink]="['/study', deckId()]">Study deck</a>
-          }
-        </div>
-      </form>
+          <div class="action-row">
+            <button mat-flat-button type="submit">
+              {{ isNewDeck() ? 'Create deck' : 'Save deck' }}
+            </button>
+            <a mat-button routerLink="/decks">Back to library</a>
+            @if (canStudyDeck()) {
+              <a mat-stroked-button [routerLink]="['/study', deckId()]">
+                <mat-icon aria-hidden="true">school</mat-icon>
+                Study deck
+              </a>
+            }
+          </div>
+        </form>
+      </mat-card>
     </div>
 
     @if (!isNewDeck()) {
-      <aside class="card-composer surface-panel" aria-labelledby="card-form-title">
+      <mat-card class="card-composer" appearance="outlined">
         <h2 id="card-form-title" class="section-title">
           {{ cardBeingEdited() ? 'Edit card' : 'Add card' }}
         </h2>
 
-        <form [formGroup]="cardForm" (ngSubmit)="saveCard()">
-          <div class="field">
-            <label for="card-front">Front</label>
-            <textarea id="card-front" formControlName="front"></textarea>
+        <form aria-labelledby="card-form-title" [formGroup]="cardForm" (ngSubmit)="saveCard()">
+          <mat-form-field appearance="outline">
+            <mat-label>Front</mat-label>
+            <textarea id="card-front" matInput formControlName="front"></textarea>
             @if (cardForm.controls.front.touched && cardForm.controls.front.invalid) {
-              <span class="field-error">Enter the card front.</span>
+              <mat-error>Enter the card front.</mat-error>
             }
-          </div>
+          </mat-form-field>
 
-          <div class="field">
-            <label for="card-back">Back</label>
-            <textarea id="card-back" formControlName="back"></textarea>
+          <mat-form-field appearance="outline">
+            <mat-label>Back</mat-label>
+            <textarea id="card-back" matInput formControlName="back"></textarea>
             @if (cardForm.controls.back.touched && cardForm.controls.back.invalid) {
-              <span class="field-error">Enter the card back.</span>
+              <mat-error>Enter the card back.</mat-error>
             }
-          </div>
+          </mat-form-field>
 
-          <div class="button-row">
-            <button class="button primary" type="submit">
+          <div class="action-row">
+            <button mat-flat-button type="submit">
               {{ cardBeingEdited() ? 'Save card' : 'Add card' }}
             </button>
             @if (cardBeingEdited()) {
-              <button class="button" type="button" (click)="cancelCardEdit()">Cancel</button>
+              <button mat-button type="button" (click)="cancelCardEdit()">Cancel</button>
             }
           </div>
         </form>
-      </aside>
+      </mat-card>
     }
   </section>
 
@@ -80,7 +85,7 @@
       @if (hasCards()) {
         <div class="card-list">
           @for (card of cards(); track card.id; let index = $index) {
-            <article class="card-row surface-panel">
+            <mat-card class="card-row" appearance="outlined">
               <div class="card-row__index" aria-label="Card number">{{ index + 1 }}</div>
               <div class="card-row__content">
                 <div>
@@ -93,12 +98,16 @@
                 </div>
               </div>
               <div class="card-row__actions">
-                <button class="button" type="button" (click)="editCard(card)">Edit</button>
-                <button class="button danger" type="button" (click)="deleteCard(card)">
+                <button mat-button type="button" (click)="editCard(card)">
+                  <mat-icon aria-hidden="true">edit</mat-icon>
+                  Edit
+                </button>
+                <button mat-button class="danger-action" type="button" (click)="deleteCard(card)">
+                  <mat-icon aria-hidden="true">delete</mat-icon>
                   Delete
                 </button>
               </div>
-            </article>
+            </mat-card>
           }
         </div>
       } @else {
@@ -112,6 +121,6 @@
   <section class="empty-state" aria-labelledby="missing-deck-title">
     <h1 id="missing-deck-title" class="section-title">Deck not found</h1>
     <p>This deck may have been deleted.</p>
-    <a class="button primary" routerLink="/decks">Back to library</a>
+    <a mat-flat-button routerLink="/decks">Back to library</a>
   </section>
 }

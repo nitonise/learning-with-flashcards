@@ -1,7 +1,9 @@
 import { TestBed } from '@angular/core/testing';
+import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, convertToParamMap, provideRouter } from '@angular/router';
 
 import { Deck } from '../../../core/deck.model';
+import { expectNoAxeViolations } from '../../../test-helpers/a11y';
 import { DeckEditor } from './deck-editor';
 
 const STORAGE_KEY = 'learning-with-flashcards.decks';
@@ -16,6 +18,23 @@ function storedDeck(): Deck {
     createdAt: now,
     updatedAt: now,
     cards: [],
+  };
+}
+
+function storedDeckWithCard(): Deck {
+  const now = '2026-01-01T00:00:00.000Z';
+
+  return {
+    ...storedDeck(),
+    cards: [
+      {
+        id: 'card-editor-test',
+        front: 'Question',
+        back: 'Answer',
+        createdAt: now,
+        updatedAt: now,
+      },
+    ],
   };
 }
 
@@ -41,9 +60,23 @@ function setFieldValue(field: HTMLInputElement | HTMLTextAreaElement, value: str
   field.dispatchEvent(new Event('input'));
 }
 
+function buttonByText(root: ParentNode, text: string): HTMLButtonElement {
+  const button = Array.from(root.querySelectorAll('button')).find((candidate) =>
+    candidate.textContent?.includes(text),
+  );
+
+  expect(button).toBeTruthy();
+  return button as HTMLButtonElement;
+}
+
+function waitForDialogClose(): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, 300));
+}
+
 describe('DeckEditor', () => {
   afterEach(() => {
     localStorage.clear();
+    document.body.replaceChildren();
     TestBed.resetTestingModule();
   });
 
@@ -147,5 +180,43 @@ describe('DeckEditor', () => {
 
     expect(nameInput.value).toBe('Unsaved deck name');
     expect(descriptionInput.value).toBe('Unsaved deck description');
+  });
+
+  it('deletes a card after Material dialog confirmation', async () => {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify([storedDeckWithCard()]));
+
+    await configureDeckEditor({ deckId: 'deck-editor-test' });
+
+    const fixture = TestBed.createComponent(DeckEditor);
+    fixture.detectChanges();
+
+    const compiled = fixture.nativeElement as HTMLElement;
+    buttonByText(compiled, 'Delete').click();
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    const dialog = document.body.querySelector('mat-dialog-container') as HTMLElement;
+    expect(dialog.textContent).toContain('Delete this card from the deck?');
+
+    expect(buttonByText(dialog, 'Delete')).toBeTruthy();
+
+    TestBed.inject(MatDialog).openDialogs[0].close(true);
+    await waitForDialogClose();
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    expect(compiled.textContent).toContain('Add at least one card before studying this deck.');
+  });
+
+  it('passes axe checks', async () => {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify([storedDeckWithCard()]));
+
+    await configureDeckEditor({ deckId: 'deck-editor-test' });
+
+    const fixture = TestBed.createComponent(DeckEditor);
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    await expectNoAxeViolations(fixture.nativeElement);
   });
 });

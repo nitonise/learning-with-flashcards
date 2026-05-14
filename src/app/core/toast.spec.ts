@@ -1,46 +1,59 @@
 import { TestBed } from '@angular/core/testing';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 import { ToastService } from './toast';
 
 describe('ToastService', () => {
+  let snackBar: { open: ReturnType<typeof vi.fn>; dismiss: ReturnType<typeof vi.fn> };
+
   beforeEach(() => {
-    vi.useFakeTimers();
-    TestBed.configureTestingModule({});
+    snackBar = {
+      open: vi.fn(),
+      dismiss: vi.fn(),
+    };
+
+    TestBed.configureTestingModule({
+      providers: [{ provide: MatSnackBar, useValue: snackBar }],
+    });
   });
 
   afterEach(() => {
-    vi.useRealTimers();
     TestBed.resetTestingModule();
   });
 
-  it('shows success messages', () => {
+  it('shows success messages with a polite snack bar', () => {
     const toast = TestBed.inject(ToastService);
 
     toast.success('Deck saved.');
 
-    expect(toast.message()).toEqual({
-      id: 0,
-      text: 'Deck saved.',
-      tone: 'success',
+    expect(snackBar.open).toHaveBeenCalledWith('Deck saved.', 'Dismiss', {
+      duration: 3200,
+      horizontalPosition: 'end',
+      panelClass: ['app-snack', 'app-snack--success'],
+      politeness: 'polite',
+      verticalPosition: 'bottom',
     });
   });
 
-  it('dismisses the current message', () => {
+  it('shows warning messages assertively', () => {
     const toast = TestBed.inject(ToastService);
 
-    toast.success('Deck created.');
-    toast.dismiss();
+    toast.warning('Add a card first.');
 
-    expect(toast.message()).toBeNull();
+    expect(snackBar.open).toHaveBeenCalledWith('Add a card first.', 'Dismiss', {
+      duration: 3200,
+      horizontalPosition: 'end',
+      panelClass: ['app-snack', 'app-snack--warning'],
+      politeness: 'assertive',
+      verticalPosition: 'bottom',
+    });
   });
 
-  it('automatically clears the latest message', () => {
+  it('dismisses the current snack bar', () => {
     const toast = TestBed.inject(ToastService);
 
-    toast.success('First message.');
-    toast.success('Second message.');
-    vi.advanceTimersByTime(3200);
+    toast.dismiss();
 
-    expect(toast.message()).toBeNull();
+    expect(snackBar.dismiss).toHaveBeenCalled();
   });
 });

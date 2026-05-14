@@ -1,4 +1,9 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
 import {
   AbstractControl,
   FormBuilder,
@@ -8,6 +13,7 @@ import {
 } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 
+import { ConfirmDialogService } from '../../../core/confirm-dialog';
 import { DeckStore } from '../../../core/deck-store';
 import { Flashcard } from '../../../core/deck.model';
 import { ToastService } from '../../../core/toast';
@@ -20,12 +26,21 @@ const trimmedRequired: ValidatorFn = (control: AbstractControl): ValidationError
 
 @Component({
   selector: 'app-deck-editor',
-  imports: [ReactiveFormsModule, RouterLink],
+  imports: [
+    MatButtonModule,
+    MatCardModule,
+    MatFormFieldModule,
+    MatIconModule,
+    MatInputModule,
+    ReactiveFormsModule,
+    RouterLink,
+  ],
   templateUrl: './deck-editor.html',
   styleUrl: './deck-editor.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DeckEditor {
+  private readonly confirmDialog = inject(ConfirmDialogService);
   private readonly deckStore = inject(DeckStore);
   private readonly formBuilder = inject(FormBuilder);
   private readonly route = inject(ActivatedRoute);
@@ -136,14 +151,28 @@ export class DeckEditor {
 
   protected deleteCard(card: Flashcard): void {
     const deckId = this.deckId();
-    const confirmed = globalThis.confirm?.('Delete this card?') ?? false;
 
-    if (deckId && confirmed) {
-      this.deckStore.deleteCard(deckId, card.id);
-      this.toast.success('Card deleted.');
-      if (this.editingCardId() === card.id) {
-        this.cancelCardEdit();
-      }
+    if (!deckId) {
+      return;
     }
+
+    this.confirmDialog
+      .confirm({
+        title: 'Delete card?',
+        message: 'Delete this card from the deck?',
+        confirmLabel: 'Delete',
+        tone: 'danger',
+      })
+      .subscribe((confirmed) => {
+        if (!confirmed) {
+          return;
+        }
+
+        this.deckStore.deleteCard(deckId, card.id);
+        this.toast.success('Card deleted.');
+        if (this.editingCardId() === card.id) {
+          this.cancelCardEdit();
+        }
+      });
   }
 }

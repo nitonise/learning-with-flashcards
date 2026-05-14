@@ -8,37 +8,52 @@
     </p>
   </div>
 
-  <a class="button primary" routerLink="/decks/new">Create deck</a>
+  <a mat-flat-button routerLink="/decks/new">Create deck</a>
 </section>
 
 @if (hasDecks()) {
   <section class="deck-grid" aria-label="Saved decks">
     @for (deck of decks(); track deck.id) {
-      <article class="deck-card surface-panel">
-        <div class="deck-card__body">
-          <p class="deck-card__meta">{{ deck.cards.length }} cards</p>
-          <h2>{{ deck.name }}</h2>
+      <mat-card class="deck-card" appearance="outlined">
+        <mat-card-header>
+          <mat-card-subtitle>{{ deck.cards.length }} cards</mat-card-subtitle>
+          <mat-card-title>{{ deck.name }}</mat-card-title>
+        </mat-card-header>
+
+        <mat-card-content>
           @if (deck.description) {
             <p>{{ deck.description }}</p>
           } @else {
             <p class="muted">No description yet.</p>
           }
-        </div>
+        </mat-card-content>
 
-        <div class="deck-card__actions" aria-label="Actions for {{ deck.name }}">
-          <a class="button accent" [routerLink]="['/study', deck.id]">Study</a>
-          <a class="button" [routerLink]="['/decks', deck.id, 'edit']">Edit</a>
-          <button class="button danger" type="button" (click)="deleteDeck(deck.id, deck.name)">
+        <mat-card-actions class="deck-card__actions" aria-label="Actions for {{ deck.name }}">
+          <a mat-flat-button [routerLink]="['/study', deck.id]">
+            <mat-icon aria-hidden="true">school</mat-icon>
+            Study
+          </a>
+          <a mat-button [routerLink]="['/decks', deck.id, 'edit']">
+            <mat-icon aria-hidden="true">edit</mat-icon>
+            Edit
+          </a>
+          <button
+            mat-button
+            class="danger-action"
+            type="button"
+            (click)="deleteDeck(deck.id, deck.name)"
+          >
+            <mat-icon aria-hidden="true">delete</mat-icon>
             Delete
           </button>
-        </div>
-      </article>
+        </mat-card-actions>
+      </mat-card>
     }
   </section>
 } @else {
   <section class="empty-state" aria-labelledby="empty-library-title">
     <h2 id="empty-library-title" class="section-title">No decks yet</h2>
     <p>Add your first deck to start building a reusable study set.</p>
-    <a class="button primary" routerLink="/decks/new">Create deck</a>
+    <a mat-flat-button routerLink="/decks/new">Create deck</a>
   </section>
 }

@@ -1,5 +1,5 @@
 <div class="app-shell">
-  <header class="topbar">
+  <mat-toolbar class="topbar">
     <a class="brand" routerLink="/decks" aria-label="Flashcards home">
       <span class="brand-mark" aria-hidden="true">F</span>
       <span>
@@ -10,13 +10,14 @@
 
     <nav class="primary-nav" aria-label="Primary navigation">
       <a
+        mat-button
         routerLink="/decks"
         routerLinkActive="is-active"
         [routerLinkActiveOptions]="{ exact: true }"
       >
         Library
       </a>
-      <a routerLink="/decks/new" routerLinkActive="is-active">New deck</a>
+      <a mat-button routerLink="/decks/new" routerLinkActive="is-active">New deck</a>
     </nav>
 
     <div class="library-count" aria-label="Library totals">
@@ -25,26 +26,20 @@
     </div>
 
     <button
+      mat-icon-button
       class="theme-toggle"
       type="button"
-      aria-label="Dark theme"
+      [attr.aria-label]="themeService.isDark() ? 'Switch to light theme' : 'Switch to dark theme'"
       [attr.aria-pressed]="themeService.isDark()"
       (click)="themeService.toggleTheme()"
     >
-      <span class="theme-toggle__icon" aria-hidden="true">
-        @if (themeService.isDark()) {
-          <span class="theme-toggle__moon"></span>
-        } @else {
-          <span class="theme-toggle__sun"></span>
-        }
-      </span>
-      <span>{{ themeService.isDark() ? 'Dark' : 'Light' }}</span>
+      <mat-icon aria-hidden="true">{{
+        themeService.isDark() ? 'dark_mode' : 'light_mode'
+      }}</mat-icon>
     </button>
-  </header>
+  </mat-toolbar>
 
   <main class="app-main" tabindex="-1">
     <router-outlet />
   </main>
-
-  <app-toast />
 </div>

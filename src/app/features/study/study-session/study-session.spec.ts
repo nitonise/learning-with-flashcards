@@ -2,6 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { ActivatedRoute, convertToParamMap, provideRouter } from '@angular/router';
 
 import { Deck, Flashcard } from '../../../core/deck.model';
+import { expectNoAxeViolations } from '../../../test-helpers/a11y';
 import { StudySession } from './study-session';
 
 const STORAGE_KEY = 'learning-with-flashcards.decks';
@@ -91,6 +92,14 @@ describe('StudySession', () => {
     TestBed.resetTestingModule();
   });
 
+  it('passes axe checks', async () => {
+    const fixture = TestBed.createComponent(StudySession);
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    await expectNoAxeViolations(fixture.nativeElement);
+  });
+
   it('flips and navigates cards', () => {
     const fixture = TestBed.createComponent(StudySession);
     fixture.detectChanges();
@@ -131,10 +140,16 @@ describe('StudySession', () => {
     fixture.detectChanges();
 
     const component = studySessionApi(fixture);
-    const originalIds = component.studyCards().map((card) => card.id).sort();
+    const originalIds = component
+      .studyCards()
+      .map((card) => card.id)
+      .sort();
 
     component.toggleShuffle();
-    const shuffledIds = component.studyCards().map((card) => card.id).sort();
+    const shuffledIds = component
+      .studyCards()
+      .map((card) => card.id)
+      .sort();
 
     expect(shuffledIds).toEqual(originalIds);
   });
@@ -244,10 +259,16 @@ describe('StudySession', () => {
     component.nextCard();
     component.toggleActiveCardDifficult();
     component.toggleDifficultOnly();
-    const difficultOnlyIds = component.studyCards().map((card) => card.id).sort();
+    const difficultOnlyIds = component
+      .studyCards()
+      .map((card) => card.id)
+      .sort();
 
     component.toggleShuffle();
-    const shuffledDifficultOnlyIds = component.studyCards().map((card) => card.id).sort();
+    const shuffledDifficultOnlyIds = component
+      .studyCards()
+      .map((card) => card.id)
+      .sort();
 
     expect(difficultOnlyIds).toEqual(['card-one', 'card-two']);
     expect(shuffledDifficultOnlyIds).toEqual(difficultOnlyIds);

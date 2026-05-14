@@ -1,4 +1,8 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
+import { MatButtonToggleModule } from '@angular/material/button-toggle';
+import { MatCardModule } from '@angular/material/card';
+import { MatIconModule } from '@angular/material/icon';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 
 import { DeckStore } from '../../../core/deck-store';
@@ -6,7 +10,7 @@ import { Flashcard } from '../../../core/deck.model';
 
 @Component({
   selector: 'app-study-session',
-  imports: [RouterLink],
+  imports: [MatButtonModule, MatButtonToggleModule, MatCardModule, MatIconModule, RouterLink],
   templateUrl: './study-session.html',
   styleUrl: './study-session.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -61,7 +65,9 @@ export class StudySession {
     return this.isFlipped() ? card?.back : card?.front;
   });
   protected readonly canMoveBack = computed(() => this.activeIndex() > 0);
-  protected readonly canMoveForward = computed(() => this.activeIndex() < this.studyCards().length - 1);
+  protected readonly canMoveForward = computed(
+    () => this.activeIndex() < this.studyCards().length - 1,
+  );
 
   protected toggleFlip(): void {
     this.isFlipped.update((flipped) => !flipped);
