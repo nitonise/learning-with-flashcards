@@ -8,7 +8,14 @@ const STORAGE_KEY = 'learning-with-flashcards.decks';
 
 interface StudySessionTestApi {
   studyCards: () => Flashcard[];
+  activeText: () => string | undefined;
+  difficultCount: () => number;
+  showDifficultOnly: () => boolean;
+  activeCardIsDifficult: () => boolean;
+  toggleActiveCardDifficult: () => void;
+  toggleDifficultOnly: () => void;
   toggleShuffle: () => void;
+  nextCard: () => void;
 }
 
 function studyDeck(): Deck {
@@ -35,8 +42,28 @@ function studyDeck(): Deck {
         createdAt: now,
         updatedAt: now,
       },
+      {
+        id: 'card-three',
+        front: 'Question three',
+        back: 'Answer three',
+        createdAt: now,
+        updatedAt: now,
+      },
     ],
   };
+}
+
+function getButtonByText(compiled: HTMLElement, text: string): HTMLButtonElement {
+  const button = Array.from(compiled.querySelectorAll('button')).find((candidate) =>
+    candidate.textContent?.includes(text),
+  );
+
+  expect(button).toBeTruthy();
+  return button as HTMLButtonElement;
+}
+
+function studySessionApi(fixture: { componentInstance: StudySession }): StudySessionTestApi {
+  return fixture.componentInstance as unknown as StudySessionTestApi;
 }
 
 describe('StudySession', () => {
@@ -103,12 +130,126 @@ describe('StudySession', () => {
     const fixture = TestBed.createComponent(StudySession);
     fixture.detectChanges();
 
-    const component = fixture.componentInstance as unknown as StudySessionTestApi;
+    const component = studySessionApi(fixture);
     const originalIds = component.studyCards().map((card) => card.id).sort();
 
     component.toggleShuffle();
     const shuffledIds = component.studyCards().map((card) => card.id).sort();
 
     expect(shuffledIds).toEqual(originalIds);
+  });
+
+  it('marks and unmarks the active card as difficult', () => {
+    const fixture = TestBed.createComponent(StudySession);
+    fixture.detectChanges();
+
+    const compiled = fixture.nativeElement as HTMLElement;
+    const component = studySessionApi(fixture);
+    const markButton = getButtonByText(compiled, 'Mark difficult');
+
+    expect(markButton.getAttribute('aria-pressed')).toBe('false');
+
+    markButton.click();
+    fixture.detectChanges();
+
+    const markedButton = getButtonByText(compiled, 'Marked difficult');
+    expect(component.difficultCount()).toBe(1);
+    expect(component.activeCardIsDifficult()).toBe(true);
+    expect(markedButton.getAttribute('aria-pressed')).toBe('true');
+
+    markedButton.click();
+    fixture.detectChanges();
+
+    expect(component.difficultCount()).toBe(0);
+    expect(component.activeCardIsDifficult()).toBe(false);
+    expect(getButtonByText(compiled, 'Mark difficult').getAttribute('aria-pressed')).toBe('false');
+  });
+
+  it('disables difficult-only mode when no cards are marked', () => {
+    const fixture = TestBed.createComponent(StudySession);
+    fixture.detectChanges();
+
+    const compiled = fixture.nativeElement as HTMLElement;
+    const difficultOnlyButton = getButtonByText(compiled, 'Difficult only (0)');
+
+    expect(difficultOnlyButton.disabled).toBe(true);
+    expect(difficultOnlyButton.getAttribute('aria-pressed')).toBe('false');
+  });
+
+  it('shows only marked cards in difficult-only mode', () => {
+    const fixture = TestBed.createComponent(StudySession);
+    fixture.detectChanges();
+
+    const component = studySessionApi(fixture);
+    component.toggleActiveCardDifficult();
+    component.nextCard();
+    component.nextCard();
+    component.toggleActiveCardDifficult();
+
+    component.toggleDifficultOnly();
+
+    expect(component.showDifficultOnly()).toBe(true);
+    expect(component.studyCards().map((card) => card.id)).toEqual(['card-one', 'card-three']);
+    expect(component.activeText()).toBe('Question one');
+
+    component.nextCard();
+
+    expect(component.activeText()).toBe('Question three');
+  });
+
+  it('removes unmarked cards from a difficult-only run', () => {
+    const fixture = TestBed.createComponent(StudySession);
+    fixture.detectChanges();
+
+    const component = studySessionApi(fixture);
+    component.toggleActiveCardDifficult();
+    component.nextCard();
+    component.toggleActiveCardDifficult();
+    component.toggleDifficultOnly();
+    component.nextCard();
+
+    component.toggleActiveCardDifficult();
+
+    expect(component.showDifficultOnly()).toBe(true);
+    expect(component.studyCards().map((card) => card.id)).toEqual(['card-one']);
+    expect(component.activeText()).toBe('Question one');
+  });
+
+  it('exits difficult-only mode when the last difficult card is unmarked', () => {
+    const fixture = TestBed.createComponent(StudySession);
+    fixture.detectChanges();
+
+    const component = studySessionApi(fixture);
+    component.toggleActiveCardDifficult();
+    component.toggleDifficultOnly();
+
+    component.toggleActiveCardDifficult();
+
+    expect(component.showDifficultOnly()).toBe(false);
+    expect(component.difficultCount()).toBe(0);
+    expect(component.studyCards().map((card) => card.id)).toEqual([
+      'card-one',
+      'card-two',
+      'card-three',
+    ]);
+    expect(component.activeText()).toBe('Question one');
+  });
+
+  it('preserves the difficult-only card set when shuffled', () => {
+    const fixture = TestBed.createComponent(StudySession);
+    fixture.detectChanges();
+
+    const component = studySessionApi(fixture);
+    component.toggleActiveCardDifficult();
+    component.nextCard();
+    component.toggleActiveCardDifficult();
+    component.toggleDifficultOnly();
+    const difficultOnlyIds = component.studyCards().map((card) => card.id).sort();
+
+    component.toggleShuffle();
+    const shuffledDifficultOnlyIds = component.studyCards().map((card) => card.id).sort();
+
+    expect(difficultOnlyIds).toEqual(['card-one', 'card-two']);
+    expect(shuffledDifficultOnlyIds).toEqual(difficultOnlyIds);
   });
 });

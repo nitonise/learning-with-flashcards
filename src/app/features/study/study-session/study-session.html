@@ -7,6 +7,25 @@
       </div>
 
       <div class="study-actions">
+        @if (activeCard()) {
+          <button
+            class="button"
+            type="button"
+            [attr.aria-pressed]="activeCardIsDifficult()"
+            (click)="toggleActiveCardDifficult()"
+          >
+            {{ activeCardIsDifficult() ? 'Marked difficult' : 'Mark difficult' }}
+          </button>
+        }
+        <button
+          class="button"
+          type="button"
+          [attr.aria-pressed]="showDifficultOnly()"
+          [disabled]="difficultCount() === 0"
+          (click)="toggleDifficultOnly()"
+        >
+          Difficult only ({{ difficultCount() }})
+        </button>
         <button
           class="button"
           type="button"
