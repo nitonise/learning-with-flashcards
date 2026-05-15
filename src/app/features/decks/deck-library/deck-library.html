@@ -8,7 +8,7 @@
     </p>
   </div>
 
-  <a mat-flat-button routerLink="/decks/new">Create deck</a>
+  <a mat-flat-button class="create-deck-button" routerLink="/decks/new">Create deck</a>
 </section>
 
 @if (hasDecks()) {
@@ -54,6 +54,6 @@
   <section class="empty-state" aria-labelledby="empty-library-title">
     <h2 id="empty-library-title" class="section-title">No decks yet</h2>
     <p>Add your first deck to start building a reusable study set.</p>
-    <a mat-flat-button routerLink="/decks/new">Create deck</a>
+    <a mat-flat-button class="create-deck-button" routerLink="/decks/new">Create deck</a>
   </section>
 }
