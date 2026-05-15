@@ -12,44 +12,80 @@
 </section>
 
 @if (hasDecks()) {
-  <section class="deck-grid" aria-label="Saved decks">
-    @for (deck of decks(); track deck.id) {
-      <mat-card class="deck-card" appearance="outlined">
-        <mat-card-header>
-          <mat-card-subtitle>{{ deck.cards.length }} cards</mat-card-subtitle>
-          <mat-card-title>{{ deck.name }}</mat-card-title>
-        </mat-card-header>
-
-        <mat-card-content>
-          @if (deck.description) {
-            <p>{{ deck.description }}</p>
-          } @else {
-            <p class="muted">No description yet.</p>
-          }
-        </mat-card-content>
-
-        <mat-card-actions class="deck-card__actions" aria-label="Actions for {{ deck.name }}">
-          <a mat-flat-button [routerLink]="['/study', deck.id]">
-            <mat-icon aria-hidden="true">school</mat-icon>
-            Study
-          </a>
-          <a mat-button [routerLink]="['/decks', deck.id, 'edit']">
-            <mat-icon aria-hidden="true">edit</mat-icon>
-            Edit
-          </a>
-          <button
-            mat-button
-            class="danger-action"
-            type="button"
-            (click)="deleteDeck(deck.id, deck.name)"
-          >
-            <mat-icon aria-hidden="true">delete</mat-icon>
-            Delete
-          </button>
-        </mat-card-actions>
-      </mat-card>
-    }
+  <section class="deck-search" aria-labelledby="deck-search-label">
+    <mat-form-field appearance="outline" class="deck-search__field">
+      <mat-label id="deck-search-label">Search deck titles</mat-label>
+      <mat-icon matPrefix aria-hidden="true">search</mat-icon>
+      <input
+        matInput
+        id="deck-title-search"
+        type="search"
+        autocomplete="off"
+        [value]="searchQuery()"
+        (input)="updateSearchQuery($event)"
+      />
+      @if (searchQuery()) {
+        <button
+          mat-icon-button
+          matSuffix
+          type="button"
+          aria-label="Clear deck title search"
+          (click)="clearSearchQuery()"
+        >
+          <mat-icon aria-hidden="true">close</mat-icon>
+        </button>
+      }
+    </mat-form-field>
+    <p class="deck-search__count" aria-live="polite" aria-atomic="true">
+      {{ resultCountText() }}
+    </p>
   </section>
+
+  @if (hasFilteredDecks()) {
+    <section class="deck-grid" aria-label="Saved decks">
+      @for (deck of filteredDecks(); track deck.id) {
+        <mat-card class="deck-card" appearance="outlined">
+          <mat-card-header>
+            <mat-card-subtitle>{{ deck.cards.length }} cards</mat-card-subtitle>
+            <mat-card-title>{{ deck.name }}</mat-card-title>
+          </mat-card-header>
+
+          <mat-card-content>
+            @if (deck.description) {
+              <p>{{ deck.description }}</p>
+            } @else {
+              <p class="muted">No description yet.</p>
+            }
+          </mat-card-content>
+
+          <mat-card-actions class="deck-card__actions" aria-label="Actions for {{ deck.name }}">
+            <a mat-flat-button [routerLink]="['/study', deck.id]">
+              <mat-icon aria-hidden="true">school</mat-icon>
+              Study
+            </a>
+            <a mat-button [routerLink]="['/decks', deck.id, 'edit']">
+              <mat-icon aria-hidden="true">edit</mat-icon>
+              Edit
+            </a>
+            <button
+              mat-button
+              class="danger-action"
+              type="button"
+              (click)="deleteDeck(deck.id, deck.name)"
+            >
+              <mat-icon aria-hidden="true">delete</mat-icon>
+              Delete
+            </button>
+          </mat-card-actions>
+        </mat-card>
+      }
+    </section>
+  } @else {
+    <section class="no-results-state" aria-labelledby="no-matching-decks-title">
+      <h2 id="no-matching-decks-title" class="section-title">No matching decks</h2>
+      <p>Try a different deck title.</p>
+    </section>
+  }
 } @else {
   <section class="empty-state" aria-labelledby="empty-library-title">
     <h2 id="empty-library-title" class="section-title">No decks yet</h2>

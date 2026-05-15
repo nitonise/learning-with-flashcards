@@ -14,6 +14,26 @@
   white-space: nowrap;
 }
 
+.deck-search {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+}
+
+.deck-search__field {
+  width: min(100%, 28rem);
+}
+
+.deck-search__count {
+  margin: 0 0 1.25rem;
+  color: var(--muted);
+  font-size: 0.95rem;
+  line-height: 1.4;
+  text-align: right;
+}
+
 .deck-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(min(100%, 18rem), 22rem));
@@ -72,10 +92,34 @@ mat-card-content p {
   color: var(--warning);
 }
 
+.no-results-state {
+  max-width: 34rem;
+  padding-block: clamp(1.5rem, 5vw, 3rem);
+}
+
+.no-results-state p {
+  color: var(--muted);
+  line-height: 1.55;
+}
+
 @media (max-width: 680px) {
   .library-hero {
     align-items: start;
     flex-direction: column;
+  }
+
+  .deck-search {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .deck-search__field {
+    width: 100%;
+  }
+
+  .deck-search__count {
+    margin-top: -0.75rem;
+    text-align: left;
   }
 }
 
