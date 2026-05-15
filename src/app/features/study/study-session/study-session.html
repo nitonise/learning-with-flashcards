@@ -47,7 +47,14 @@
     @if (studyCards().length) {
       <button class="flashcard" type="button" (click)="toggleFlip()">
         <span class="flashcard__side">{{ activeSide() }}</span>
-        <span class="flashcard__text">{{ activeText() }}</span>
+        <span class="flashcard__content">
+          @if (hasText(activeText())) {
+            <span class="flashcard__text">{{ activeText() }}</span>
+          }
+          @if (activeImage(); as image) {
+            <img class="flashcard__image" [src]="image.src" [alt]="image.alt" />
+          }
+        </span>
       </button>
 
       <nav class="study-controls" aria-label="Study card navigation">

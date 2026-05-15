@@ -64,10 +64,18 @@ export class StudySession {
     const card = this.activeCard();
     return this.isFlipped() ? card?.back : card?.front;
   });
+  protected readonly activeImage = computed(() => {
+    const card = this.activeCard();
+    return this.isFlipped() ? card?.backImage : card?.frontImage;
+  });
   protected readonly canMoveBack = computed(() => this.activeIndex() > 0);
   protected readonly canMoveForward = computed(
     () => this.activeIndex() < this.studyCards().length - 1,
   );
+
+  protected hasText(value: string | undefined): value is string {
+    return typeof value === 'string' && value.trim().length > 0;
+  }
 
   protected toggleFlip(): void {
     this.isFlipped.update((flipped) => !flipped);

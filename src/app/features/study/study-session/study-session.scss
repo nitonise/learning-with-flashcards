@@ -69,6 +69,14 @@
   text-transform: uppercase;
 }
 
+.flashcard__content {
+  display: grid;
+  justify-items: center;
+  gap: 1rem;
+  width: 100%;
+  min-width: 0;
+}
+
 .flashcard__text {
   min-width: 0;
   max-width: min(100%, 28ch);
@@ -78,6 +86,15 @@
   overflow-wrap: anywhere;
   white-space: pre-wrap;
   hyphens: auto;
+}
+
+.flashcard__image {
+  display: block;
+  width: min(100%, 34rem);
+  max-height: clamp(12rem, 42vh, 24rem);
+  object-fit: contain;
+  border: 1px solid var(--line);
+  background: var(--surface);
 }
 
 .study-controls {

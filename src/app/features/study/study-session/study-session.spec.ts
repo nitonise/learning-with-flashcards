@@ -1,7 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { ActivatedRoute, convertToParamMap, provideRouter } from '@angular/router';
 
-import { Deck, Flashcard } from '../../../core/deck.model';
+import { Deck, Flashcard, FlashcardImage } from '../../../core/deck.model';
 import { expectNoAxeViolations } from '../../../test-helpers/a11y';
 import { StudySession } from './study-session';
 
@@ -32,7 +32,9 @@ function studyDeck(): Deck {
       {
         id: 'card-one',
         front: 'Question one',
+        frontImage: testImage('Question one diagram', 'front.png'),
         back: 'Answer one',
+        backImage: testImage('Answer one diagram', 'back.png'),
         createdAt: now,
         updatedAt: now,
       },
@@ -51,6 +53,17 @@ function studyDeck(): Deck {
         updatedAt: now,
       },
     ],
+  };
+}
+
+function testImage(alt: string, originalName: string): FlashcardImage {
+  return {
+    src: 'data:image/png;base64,aW1hZ2U=',
+    alt,
+    mimeType: 'image/png',
+    originalName,
+    width: 640,
+    height: 480,
   };
 }
 
@@ -133,6 +146,22 @@ describe('StudySession', () => {
 
     expect(flashcard.getAttribute('aria-label')).toBeNull();
     expect(flashcard.textContent).toContain('Question one');
+  });
+
+  it('renders front and back images on the correct side', () => {
+    const fixture = TestBed.createComponent(StudySession);
+    fixture.detectChanges();
+
+    const compiled = fixture.nativeElement as HTMLElement;
+    const frontImage = compiled.querySelector('.flashcard__image') as HTMLImageElement;
+    expect(frontImage.alt).toBe('Question one diagram');
+
+    getButtonByText(compiled, 'Flip').click();
+    fixture.detectChanges();
+
+    const backImage = compiled.querySelector('.flashcard__image') as HTMLImageElement;
+    expect(backImage.alt).toBe('Answer one diagram');
+    expect(compiled.querySelector('.flashcard__text')?.textContent).toContain('Answer one');
   });
 
   it('preserves the same card set when shuffled', () => {

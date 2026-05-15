@@ -74,7 +74,11 @@ export class DeckLibrary {
           return;
         }
 
-        this.deckStore.deleteDeck(deckId);
+        if (!this.deckStore.deleteDeck(deckId)) {
+          this.toast.warning('Deck could not be deleted.');
+          return;
+        }
+
         this.toast.success('Deck deleted.');
       });
   }

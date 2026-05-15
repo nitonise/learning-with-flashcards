@@ -1,7 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 
 import { DeckStore } from './deck-store';
-import { Deck } from './deck.model';
+import { Deck, FlashcardImage } from './deck.model';
 
 const STORAGE_KEY = 'learning-with-flashcards.decks';
 
@@ -26,6 +26,27 @@ function testDeck(): Deck {
   };
 }
 
+function testImage(name = 'diagram.png'): FlashcardImage {
+  return {
+    src: 'data:image/png;base64,aW1hZ2U=',
+    alt: 'Cell diagram',
+    mimeType: 'image/png',
+    originalName: name,
+    width: 640,
+    height: 480,
+  };
+}
+
+function createDeckOrThrow(store: DeckStore, name: string, description = ''): Deck {
+  const deck = store.createDeck(name, description);
+
+  if (!deck) {
+    throw new Error('Expected deck to be created.');
+  }
+
+  return deck;
+}
+
 describe('DeckStore', () => {
   beforeEach(() => {
     localStorage.clear();
@@ -33,6 +54,7 @@ describe('DeckStore', () => {
   });
 
   afterEach(() => {
+    vi.restoreAllMocks();
     TestBed.resetTestingModule();
   });
 
@@ -76,8 +98,35 @@ describe('DeckStore', () => {
     expect(store.totalCards()).toBe(1);
   });
 
+  it('loads legacy saved cards without image fields', () => {
+    const legacyDeck = testDeck();
+    localStorage.setItem(STORAGE_KEY, JSON.stringify([legacyDeck]));
+
+    const store = TestBed.inject(DeckStore);
+
+    expect(store.decks()[0].cards[0].frontImage).toBeUndefined();
+    expect(store.decks()[0].cards[0].backImage).toBeUndefined();
+  });
+
   it('rejects invalid persisted data by falling back safely', () => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify([{ id: 'broken' }]));
+
+    const store = TestBed.inject(DeckStore);
+
+    expect(store.decks()).toHaveLength(1);
+    expect(store.decks()[0].name).toBe('Study Basics');
+  });
+
+  it('rejects invalid persisted image data by falling back safely', () => {
+    const deck = testDeck();
+    deck.cards[0] = {
+      ...deck.cards[0],
+      frontImage: {
+        ...testImage(),
+        alt: '',
+      },
+    };
+    localStorage.setItem(STORAGE_KEY, JSON.stringify([deck]));
 
     const store = TestBed.inject(DeckStore);
 
@@ -89,7 +138,7 @@ describe('DeckStore', () => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify([]));
 
     const store = TestBed.inject(DeckStore);
-    const deck = store.createDeck(' Biology ', ' Cells ');
+    const deck = createDeckOrThrow(store, ' Biology ', ' Cells ');
 
     expect(store.deckById(deck.id)?.name).toBe('Biology');
 
@@ -104,16 +153,64 @@ describe('DeckStore', () => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify([]));
 
     const store = TestBed.inject(DeckStore);
-    const deck = store.createDeck('History', '');
-    const card = store.addCard(deck.id, ' 1492 ', ' Columbus reaches the Americas ');
+    const deck = createDeckOrThrow(store, 'History');
+    const card = store.addCard(deck.id, {
+      front: ' 1492 ',
+      back: ' Columbus reaches the Americas ',
+    });
 
     expect(card).toBeDefined();
     expect(store.deckById(deck.id)?.cards[0].front).toBe('1492');
 
-    store.updateCard(deck.id, card?.id ?? '', '1066', 'Battle of Hastings');
+    store.updateCard(deck.id, card?.id ?? '', { front: '1066', back: 'Battle of Hastings' });
     expect(store.deckById(deck.id)?.cards[0].back).toBe('Battle of Hastings');
 
     store.deleteCard(deck.id, card?.id ?? '');
     expect(store.deckById(deck.id)?.cards).toHaveLength(0);
+  });
+
+  it('creates cards with text and images', () => {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify([]));
+
+    const store = TestBed.inject(DeckStore);
+    const deck = createDeckOrThrow(store, 'Biology');
+    const card = store.addCard(deck.id, {
+      front: 'Cell',
+      frontImage: testImage('front.png'),
+      back: 'Smallest unit of life',
+      backImage: testImage('back.png'),
+    });
+
+    expect(card?.frontImage?.alt).toBe('Cell diagram');
+    expect(store.deckById(deck.id)?.cards[0].backImage?.originalName).toBe('back.png');
+  });
+
+  it('creates image-only card sides when images have alt text', () => {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify([]));
+
+    const store = TestBed.inject(DeckStore);
+    const deck = createDeckOrThrow(store, 'Art');
+    const card = store.addCard(deck.id, {
+      front: '',
+      frontImage: testImage('front.png'),
+      back: '',
+      backImage: testImage('back.png'),
+    });
+
+    expect(card).toBeDefined();
+    expect(store.deckById(deck.id)?.cards[0].front).toBe('');
+    expect(store.deckById(deck.id)?.cards[0].backImage?.alt).toBe('Cell diagram');
+  });
+
+  it('keeps deck state unchanged when persistence fails', () => {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify([testDeck()]));
+
+    const store = TestBed.inject(DeckStore);
+    vi.spyOn(Storage.prototype, 'setItem').mockImplementation(() => {
+      throw new DOMException('Quota exceeded.', 'QuotaExceededError');
+    });
+
+    expect(store.createDeck('Biology', '')).toBeUndefined();
+    expect(store.decks()).toEqual([testDeck()]);
   });
 });
