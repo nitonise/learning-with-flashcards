@@ -1,59 +1,78 @@
-# LearningWithFlashcards
+# Learning with Flashcards
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.0.4.
+Learning with Flashcards is a local-first Angular study workspace for creating flashcard decks,
+adding text or image-backed cards, and running focused study sessions in the browser.
 
-## Development server
+The app stores data locally with `localStorage`. It ships with a small starter deck on first load
+and does not require an account, backend service, or network connection after installation.
 
-To start a local development server, run:
+## Features
+
+- **Deck library:** Browse saved decks, search by deck title, see card totals, and create, edit, or
+  delete decks.
+- **Deck editor:** Manage deck name and description, add or edit cards, delete cards, attach front
+  and back images, and require alt text for attached images.
+- **Image handling:** Accepts JPEG, PNG, and WebP uploads, resizes images to safe dimensions, and
+  enforces local storage-friendly size limits before saving.
+- **Study sessions:** Flip cards, move previous or next, shuffle the current run, mark difficult
+  cards, switch to difficult-only review, and render card images with saved alt text.
+- **Local persistence:** Uses a typed `DeckStore` service to normalize and validate stored decks,
+  recover from invalid storage payloads, and preserve intentional empty libraries.
+- **Theme preference:** Supports light and dark themes and persists the selected theme locally.
+
+## Technical Approach
+
+- Angular 21 application with standalone components, lazy feature routes, separate templates and
+  styles, and `ChangeDetectionStrategy.OnPush`.
+- Signal-based state with `signal()` and `computed()` for local UI state and derived deck data.
+- Reactive Forms for deck and card editing, including validation for required text or image content
+  and image alt text.
+- Angular Material components and Material Icons for the shell, forms, cards, dialogs, snackbars,
+  buttons, and study controls.
+- Local state architecture built around typed domain models, `DeckStore`, validation,
+  normalization, and browser storage.
+- Accessibility coverage uses semantic markup, ARIA labels, keyboard-friendly controls, WCAG-aware
+  color themes, axe checks, Vitest, and Angular TestBed.
+
+## Getting Started
+
+Install dependencies:
+
+```bash
+npm install
+```
+
+Start the local development server:
+
+```bash
+npm start
+```
+
+You can also run the Angular CLI directly:
 
 ```bash
 ng serve
 ```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+Open `http://localhost:4200/` after the dev server starts.
 
-## Code scaffolding
+## Build
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
-
-```bash
-ng generate component component-name
-```
-
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+Create a production build:
 
 ```bash
-ng generate --help
+npm run build
 ```
 
-## Building
+Build output is written to `dist/`.
 
-To build the project run:
+## Test
+
+Run the unit and accessibility test suite once:
 
 ```bash
-ng build
+npm test -- --watch=false
 ```
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
-
-## Running unit tests
-
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
-
-```bash
-ng test
-```
-
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+The project uses Vitest through Angular's unit test builder. Component tests exercise the main
+deck, editor, study, shell, storage, toast, and axe accessibility paths.
