@@ -13,10 +13,12 @@ import {
 } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 
-import { ConfirmDialogService } from '../../../core/confirm-dialog';
-import { DeckStore } from '../../../core/deck-store';
-import { Flashcard, FlashcardDraft, FlashcardImage } from '../../../core/deck.model';
-import { ToastService } from '../../../core/toast';
+import { ConfirmDialogService } from '../../../core/confirm-dialog.service';
+import { DeckStoreService } from '../../../core/deck-store.service';
+import type { Flashcard } from '../../../core/flashcard';
+import type { FlashcardDraft } from '../../../core/flashcard-draft';
+import type { FlashcardImage } from '../../../core/flashcard-image';
+import { ToastService } from '../../../core/toast.service';
 
 const ACCEPTED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp'] as const;
 const ACCEPTED_IMAGE_TYPE_SET = new Set<string>(ACCEPTED_IMAGE_TYPES);
@@ -76,13 +78,13 @@ function imageAltRequired(image: () => FlashcardImage | undefined): ValidatorFn 
     ReactiveFormsModule,
     RouterLink,
   ],
-  templateUrl: './deck-editor.html',
-  styleUrl: './deck-editor.scss',
+  templateUrl: './deck-editor.component.html',
+  styleUrl: './deck-editor.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DeckEditor {
   private readonly confirmDialog = inject(ConfirmDialogService);
-  private readonly deckStore = inject(DeckStore);
+  private readonly deckStore = inject(DeckStoreService);
   private readonly formBuilder = inject(FormBuilder);
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);

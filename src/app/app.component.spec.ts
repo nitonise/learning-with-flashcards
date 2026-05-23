@@ -2,7 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 
 import { expectNoAxeViolations } from './test-helpers/a11y';
-import { App } from './app';
+import { App } from './app.component';
 import { routes } from './app.routes';
 
 describe('App', () => {

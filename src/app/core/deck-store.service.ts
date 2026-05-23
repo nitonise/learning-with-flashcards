@@ -1,6 +1,9 @@
 import { computed, Injectable, signal } from '@angular/core';
 
-import { Deck, Flashcard, FlashcardDraft, FlashcardImage } from './deck.model';
+import type { Deck } from './deck';
+import type { Flashcard } from './flashcard';
+import type { FlashcardDraft } from './flashcard-draft';
+import type { FlashcardImage } from './flashcard-image';
 
 const STORAGE_KEY = 'learning-with-flashcards.decks';
 const STORAGE_INITIALIZED_KEY = 'learning-with-flashcards.decks.initialized';
@@ -162,7 +165,7 @@ function isDeck(value: unknown): value is Deck {
 @Injectable({
   providedIn: 'root',
 })
-export class DeckStore {
+export class DeckStoreService {
   private readonly decksState = signal<Deck[]>(this.loadInitialDecks());
 
   readonly decks = this.decksState.asReadonly();

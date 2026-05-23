@@ -6,9 +6,9 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { RouterLink } from '@angular/router';
 
-import { ConfirmDialogService } from '../../../core/confirm-dialog';
-import { DeckStore } from '../../../core/deck-store';
-import { ToastService } from '../../../core/toast';
+import { ConfirmDialogService } from '../../../core/confirm-dialog.service';
+import { DeckStoreService } from '../../../core/deck-store.service';
+import { ToastService } from '../../../core/toast.service';
 
 @Component({
   selector: 'app-deck-library',
@@ -20,13 +20,13 @@ import { ToastService } from '../../../core/toast';
     MatInputModule,
     RouterLink,
   ],
-  templateUrl: './deck-library.html',
-  styleUrl: './deck-library.scss',
+  templateUrl: './deck-library.component.html',
+  styleUrl: './deck-library.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DeckLibrary {
   private readonly confirmDialog = inject(ConfirmDialogService);
-  private readonly deckStore = inject(DeckStore);
+  private readonly deckStore = inject(DeckStoreService);
   private readonly toast = inject(ToastService);
 
   protected readonly decks = this.deckStore.decks;

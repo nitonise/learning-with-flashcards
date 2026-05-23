@@ -2,9 +2,9 @@ import { TestBed } from '@angular/core/testing';
 import { MatDialog } from '@angular/material/dialog';
 import { provideRouter } from '@angular/router';
 
-import { Deck } from '../../../core/deck.model';
+import type { Deck } from '../../../core/deck';
 import { expectNoAxeViolations } from '../../../test-helpers/a11y';
-import { DeckLibrary } from './deck-library';
+import { DeckLibrary } from './deck-library.component';
 
 const STORAGE_KEY = 'learning-with-flashcards.decks';
 

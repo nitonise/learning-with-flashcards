@@ -5,18 +5,18 @@ import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 
-import { DeckStore } from '../../../core/deck-store';
-import { Flashcard } from '../../../core/deck.model';
+import { DeckStoreService } from '../../../core/deck-store.service';
+import type { Flashcard } from '../../../core/flashcard';
 
 @Component({
   selector: 'app-study-session',
   imports: [MatButtonModule, MatButtonToggleModule, MatCardModule, MatIconModule, RouterLink],
-  templateUrl: './study-session.html',
-  styleUrl: './study-session.scss',
+  templateUrl: './study-session.component.html',
+  styleUrl: './study-session.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class StudySession {
-  private readonly deckStore = inject(DeckStore);
+  private readonly deckStore = inject(DeckStoreService);
   private readonly route = inject(ActivatedRoute);
 
   protected readonly deckId = signal(this.route.snapshot.paramMap.get('deckId') ?? '');

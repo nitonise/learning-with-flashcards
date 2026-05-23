@@ -1,7 +1,8 @@
 import { TestBed } from '@angular/core/testing';
 
-import { DeckStore } from './deck-store';
-import { Deck, FlashcardImage } from './deck.model';
+import type { Deck } from './deck';
+import { DeckStoreService } from './deck-store.service';
+import type { FlashcardImage } from './flashcard-image';
 
 const STORAGE_KEY = 'learning-with-flashcards.decks';
 
@@ -37,7 +38,7 @@ function testImage(name = 'diagram.png'): FlashcardImage {
   };
 }
 
-function createDeckOrThrow(store: DeckStore, name: string, description = ''): Deck {
+function createDeckOrThrow(store: DeckStoreService, name: string, description = ''): Deck {
   const deck = store.createDeck(name, description);
 
   if (!deck) {
@@ -47,7 +48,7 @@ function createDeckOrThrow(store: DeckStore, name: string, description = ''): De
   return deck;
 }
 
-describe('DeckStore', () => {
+describe('DeckStoreService', () => {
   beforeEach(() => {
     localStorage.clear();
     TestBed.configureTestingModule({});
@@ -59,7 +60,7 @@ describe('DeckStore', () => {
   });
 
   it('seeds sample data when storage is empty', () => {
-    const store = TestBed.inject(DeckStore);
+    const store = TestBed.inject(DeckStoreService);
 
     expect(store.decks()).toHaveLength(1);
     expect(store.decks()[0].name).toBe('Study Basics');
@@ -69,7 +70,7 @@ describe('DeckStore', () => {
   it('seeds sample data when legacy saved storage has no decks', () => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify([]));
 
-    const store = TestBed.inject(DeckStore);
+    const store = TestBed.inject(DeckStoreService);
 
     expect(store.decks()).toHaveLength(1);
     expect(store.decks()[0].name).toBe('Study Basics');
@@ -77,7 +78,7 @@ describe('DeckStore', () => {
   });
 
   it('preserves a deliberately empty deck library after reload', () => {
-    const store = TestBed.inject(DeckStore);
+    const store = TestBed.inject(DeckStoreService);
 
     store.deleteDeck(store.decks()[0].id);
     expect(store.decks()).toEqual([]);
@@ -85,14 +86,14 @@ describe('DeckStore', () => {
     TestBed.resetTestingModule();
     TestBed.configureTestingModule({});
 
-    const reloadedStore = TestBed.inject(DeckStore);
+    const reloadedStore = TestBed.inject(DeckStoreService);
     expect(reloadedStore.decks()).toEqual([]);
   });
 
   it('loads existing saved data', () => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify([testDeck()]));
 
-    const store = TestBed.inject(DeckStore);
+    const store = TestBed.inject(DeckStoreService);
 
     expect(store.decks()).toEqual([testDeck()]);
     expect(store.totalCards()).toBe(1);
@@ -102,7 +103,7 @@ describe('DeckStore', () => {
     const legacyDeck = testDeck();
     localStorage.setItem(STORAGE_KEY, JSON.stringify([legacyDeck]));
 
-    const store = TestBed.inject(DeckStore);
+    const store = TestBed.inject(DeckStoreService);
 
     expect(store.decks()[0].cards[0].frontImage).toBeUndefined();
     expect(store.decks()[0].cards[0].backImage).toBeUndefined();
@@ -111,7 +112,7 @@ describe('DeckStore', () => {
   it('rejects invalid persisted data by falling back safely', () => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify([{ id: 'broken' }]));
 
-    const store = TestBed.inject(DeckStore);
+    const store = TestBed.inject(DeckStoreService);
 
     expect(store.decks()).toHaveLength(1);
     expect(store.decks()[0].name).toBe('Study Basics');
@@ -128,7 +129,7 @@ describe('DeckStore', () => {
     };
     localStorage.setItem(STORAGE_KEY, JSON.stringify([deck]));
 
-    const store = TestBed.inject(DeckStore);
+    const store = TestBed.inject(DeckStoreService);
 
     expect(store.decks()).toHaveLength(1);
     expect(store.decks()[0].name).toBe('Study Basics');
@@ -137,7 +138,7 @@ describe('DeckStore', () => {
   it('creates, updates, and deletes decks', () => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify([]));
 
-    const store = TestBed.inject(DeckStore);
+    const store = TestBed.inject(DeckStoreService);
     const deck = createDeckOrThrow(store, ' Biology ', ' Cells ');
 
     expect(store.deckById(deck.id)?.name).toBe('Biology');
@@ -152,7 +153,7 @@ describe('DeckStore', () => {
   it('creates, updates, and deletes cards', () => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify([]));
 
-    const store = TestBed.inject(DeckStore);
+    const store = TestBed.inject(DeckStoreService);
     const deck = createDeckOrThrow(store, 'History');
     const card = store.addCard(deck.id, {
       front: ' 1492 ',
@@ -172,7 +173,7 @@ describe('DeckStore', () => {
   it('creates cards with text and images', () => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify([]));
 
-    const store = TestBed.inject(DeckStore);
+    const store = TestBed.inject(DeckStoreService);
     const deck = createDeckOrThrow(store, 'Biology');
     const card = store.addCard(deck.id, {
       front: 'Cell',
@@ -188,7 +189,7 @@ describe('DeckStore', () => {
   it('creates image-only card sides when images have alt text', () => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify([]));
 
-    const store = TestBed.inject(DeckStore);
+    const store = TestBed.inject(DeckStoreService);
     const deck = createDeckOrThrow(store, 'Art');
     const card = store.addCard(deck.id, {
       front: '',
@@ -205,7 +206,7 @@ describe('DeckStore', () => {
   it('keeps deck state unchanged when persistence fails', () => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify([testDeck()]));
 
-    const store = TestBed.inject(DeckStore);
+    const store = TestBed.inject(DeckStoreService);
     vi.spyOn(Storage.prototype, 'setItem').mockImplementation(() => {
       throw new DOMException('Quota exceeded.', 'QuotaExceededError');
     });

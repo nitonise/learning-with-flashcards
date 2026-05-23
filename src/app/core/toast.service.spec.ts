@@ -1,7 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
-import { ToastService } from './toast';
+import { ToastService } from './toast.service';
 
 describe('ToastService', () => {
   let snackBar: { open: ReturnType<typeof vi.fn>; dismiss: ReturnType<typeof vi.fn> };

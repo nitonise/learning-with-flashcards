@@ -4,8 +4,8 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 
-import { DeckStore } from './core/deck-store';
-import { ThemeService } from './core/theme';
+import { DeckStoreService } from './core/deck-store.service';
+import { ThemeService } from './core/theme.service';
 
 @Component({
   selector: 'app-root',
@@ -17,12 +17,12 @@ import { ThemeService } from './core/theme';
     RouterLinkActive,
     RouterOutlet,
   ],
-  templateUrl: './app.html',
-  styleUrl: './app.scss',
+  templateUrl: './app.component.html',
+  styleUrl: './app.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class App {
-  private readonly deckStore = inject(DeckStore);
+  private readonly deckStore = inject(DeckStoreService);
   protected readonly themeService = inject(ThemeService);
 
   protected readonly deckCount = computed(() => this.deckStore.decks().length);

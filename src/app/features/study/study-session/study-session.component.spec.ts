@@ -1,9 +1,11 @@
 import { TestBed } from '@angular/core/testing';
 import { ActivatedRoute, convertToParamMap, provideRouter } from '@angular/router';
 
-import { Deck, Flashcard, FlashcardImage } from '../../../core/deck.model';
+import type { Deck } from '../../../core/deck';
+import type { Flashcard } from '../../../core/flashcard';
+import type { FlashcardImage } from '../../../core/flashcard-image';
 import { expectNoAxeViolations } from '../../../test-helpers/a11y';
-import { StudySession } from './study-session';
+import { StudySession } from './study-session.component';
 
 const STORAGE_KEY = 'learning-with-flashcards.decks';
 
