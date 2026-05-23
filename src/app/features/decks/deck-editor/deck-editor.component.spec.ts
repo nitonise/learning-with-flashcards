@@ -6,12 +6,15 @@ import type { Deck } from '../../../core/deck';
 import type { FlashcardImage } from '../../../core/flashcard-image';
 import { expectNoAxeViolations } from '../../../test-helpers/a11y';
 import { DeckEditor } from './deck-editor.component';
+import {
+  DeckImageProcessingError,
+  DeckImageProcessorService,
+} from './deck-image-processor.service';
 
 const STORAGE_KEY = 'learning-with-flashcards.decks';
 
 interface DeckEditorTestApi {
   selectImage: (side: 'front' | 'back', event: Event) => Promise<void>;
-  processImageFile: (file: File) => Promise<FlashcardImage>;
   cancelCardEdit: () => void;
 }
 
@@ -223,7 +226,8 @@ describe('DeckEditor', () => {
     fixture.detectChanges();
 
     const component = fixture.componentInstance as unknown as DeckEditorTestApi;
-    vi.spyOn(component, 'processImageFile').mockResolvedValue({
+    const imageProcessor = TestBed.inject(DeckImageProcessorService);
+    vi.spyOn(imageProcessor, 'processImageFile').mockResolvedValue({
       ...testImage('uploaded.png'),
       alt: '',
     });
@@ -276,7 +280,8 @@ describe('DeckEditor', () => {
     fixture.detectChanges();
 
     const component = fixture.componentInstance as unknown as DeckEditorTestApi;
-    const processImageFile = vi.spyOn(component, 'processImageFile');
+    const imageProcessor = TestBed.inject(DeckImageProcessorService);
+    const processImageFile = vi.spyOn(imageProcessor, 'processImageFile');
 
     await component.selectImage(
       'front',
@@ -300,10 +305,10 @@ describe('DeckEditor', () => {
     fixture.detectChanges();
 
     const component = fixture.componentInstance as unknown as DeckEditorTestApi;
-    vi.spyOn(component, 'processImageFile').mockResolvedValue({
-      ...testImage('large.png'),
-      src: `data:image/png;base64,${'a'.repeat(700 * 1024 + 1)}`,
-    });
+    const imageProcessor = TestBed.inject(DeckImageProcessorService);
+    vi.spyOn(imageProcessor, 'processImageFile').mockRejectedValue(
+      new DeckImageProcessingError('data-url-too-large'),
+    );
 
     await component.selectImage(
       'front',
@@ -325,9 +330,10 @@ describe('DeckEditor', () => {
     fixture.detectChanges();
 
     const component = fixture.componentInstance as unknown as DeckEditorTestApi;
+    const imageProcessor = TestBed.inject(DeckImageProcessorService);
     const firstUpload = deferred<FlashcardImage>();
     const secondUpload = deferred<FlashcardImage>();
-    vi.spyOn(component, 'processImageFile')
+    vi.spyOn(imageProcessor, 'processImageFile')
       .mockReturnValueOnce(firstUpload.promise)
       .mockReturnValueOnce(secondUpload.promise);
 
@@ -360,8 +366,9 @@ describe('DeckEditor', () => {
     fixture.detectChanges();
 
     const component = fixture.componentInstance as unknown as DeckEditorTestApi;
+    const imageProcessor = TestBed.inject(DeckImageProcessorService);
     const upload = deferred<FlashcardImage>();
-    vi.spyOn(component, 'processImageFile').mockReturnValue(upload.promise);
+    vi.spyOn(imageProcessor, 'processImageFile').mockReturnValue(upload.promise);
 
     const selection = component.selectImage(
       'front',

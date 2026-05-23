@@ -44,99 +44,27 @@
         </h2>
 
         <form aria-labelledby="card-form-title" [formGroup]="cardForm" (ngSubmit)="saveCard()">
-          <mat-form-field appearance="outline">
-            <mat-label>Front</mat-label>
-            <textarea id="card-front" matInput formControlName="front"></textarea>
-            @if (cardForm.controls.front.touched && cardForm.controls.front.invalid) {
-              <mat-error>Add front text or a front image.</mat-error>
-            }
-          </mat-form-field>
+          <app-card-side-form
+            side="front"
+            [textControl]="cardForm.controls.front"
+            [imageAltControl]="cardForm.controls.frontImageAlt"
+            [image]="frontImage()"
+            [imageError]="frontImageError()"
+            [acceptedImageTypes]="acceptedImageTypes"
+            (imageSelect)="selectImage('front', $event)"
+            (imageRemove)="removeImage('front')"
+          />
 
-          <div class="image-upload">
-            <label class="image-upload__label" for="card-front-image">Front image</label>
-            <input
-              id="card-front-image"
-              type="file"
-              [accept]="acceptedImageTypes"
-              (change)="selectImage('front', $event)"
-            />
-            @if (frontImageError()) {
-              <p class="field-error">{{ frontImageError() }}</p>
-            }
-            @if (frontImage(); as image) {
-              <figure class="image-preview">
-                <img [src]="image.src" [alt]="image.alt || 'Front image preview'" />
-                <figcaption>{{ image.originalName }}</figcaption>
-              </figure>
-              <mat-form-field appearance="outline">
-                <mat-label>Front image alt text</mat-label>
-                <input
-                  id="card-front-image-alt"
-                  matInput
-                  type="text"
-                  formControlName="frontImageAlt"
-                  autocomplete="off"
-                />
-                @if (
-                  cardForm.controls.frontImageAlt.touched &&
-                  cardForm.controls.frontImageAlt.invalid
-                ) {
-                  <mat-error>Enter alt text for the front image.</mat-error>
-                }
-              </mat-form-field>
-              <button mat-button type="button" (click)="removeImage('front')">
-                <mat-icon aria-hidden="true">close</mat-icon>
-                Remove front image
-              </button>
-            }
-          </div>
-
-          <mat-form-field appearance="outline">
-            <mat-label>Back</mat-label>
-            <textarea id="card-back" matInput formControlName="back"></textarea>
-            @if (cardForm.controls.back.touched && cardForm.controls.back.invalid) {
-              <mat-error>Add back text or a back image.</mat-error>
-            }
-          </mat-form-field>
-
-          <div class="image-upload">
-            <label class="image-upload__label" for="card-back-image">Back image</label>
-            <input
-              id="card-back-image"
-              type="file"
-              [accept]="acceptedImageTypes"
-              (change)="selectImage('back', $event)"
-            />
-            @if (backImageError()) {
-              <p class="field-error">{{ backImageError() }}</p>
-            }
-            @if (backImage(); as image) {
-              <figure class="image-preview">
-                <img [src]="image.src" [alt]="image.alt || 'Back image preview'" />
-                <figcaption>{{ image.originalName }}</figcaption>
-              </figure>
-              <mat-form-field appearance="outline">
-                <mat-label>Back image alt text</mat-label>
-                <input
-                  id="card-back-image-alt"
-                  matInput
-                  type="text"
-                  formControlName="backImageAlt"
-                  autocomplete="off"
-                />
-                @if (
-                  cardForm.controls.backImageAlt.touched &&
-                  cardForm.controls.backImageAlt.invalid
-                ) {
-                  <mat-error>Enter alt text for the back image.</mat-error>
-                }
-              </mat-form-field>
-              <button mat-button type="button" (click)="removeImage('back')">
-                <mat-icon aria-hidden="true">close</mat-icon>
-                Remove back image
-              </button>
-            }
-          </div>
+          <app-card-side-form
+            side="back"
+            [textControl]="cardForm.controls.back"
+            [imageAltControl]="cardForm.controls.backImageAlt"
+            [image]="backImage()"
+            [imageError]="backImageError()"
+            [acceptedImageTypes]="acceptedImageTypes"
+            (imageSelect)="selectImage('back', $event)"
+            (imageRemove)="removeImage('back')"
+          />
 
           <div class="action-row">
             <button mat-flat-button type="submit">

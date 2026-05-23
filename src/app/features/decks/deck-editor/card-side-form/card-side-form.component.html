@@ -1,0 +1,43 @@
+<mat-form-field appearance="outline">
+  <mat-label>{{ title() }}</mat-label>
+  <textarea [id]="textInputId()" matInput [formControl]="textControl()"></textarea>
+  @if (textControl().touched && textControl().invalid) {
+    <mat-error>Add {{ side() }} text or a {{ side() }} image.</mat-error>
+  }
+</mat-form-field>
+
+<div class="image-upload">
+  <label class="image-upload__label" [for]="fileInputId()">{{ title() }} image</label>
+  <input
+    [id]="fileInputId()"
+    type="file"
+    [accept]="acceptedImageTypes()"
+    (change)="selectImage($event)"
+  />
+  @if (imageError()) {
+    <p class="field-error">{{ imageError() }}</p>
+  }
+  @if (image(); as selectedImage) {
+    <figure class="image-preview">
+      <img [src]="selectedImage.src" [alt]="selectedImage.alt || title() + ' image preview'" />
+      <figcaption>{{ selectedImage.originalName }}</figcaption>
+    </figure>
+    <mat-form-field appearance="outline">
+      <mat-label>{{ title() }} image alt text</mat-label>
+      <input
+        [id]="altInputId()"
+        matInput
+        type="text"
+        [formControl]="imageAltControl()"
+        autocomplete="off"
+      />
+      @if (imageAltControl().touched && imageAltControl().invalid) {
+        <mat-error>Enter alt text for the {{ side() }} image.</mat-error>
+      }
+    </mat-form-field>
+    <button mat-button type="button" (click)="removeImage()">
+      <mat-icon aria-hidden="true">close</mat-icon>
+      Remove {{ side() }} image
+    </button>
+  }
+</div>
