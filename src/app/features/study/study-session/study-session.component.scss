@@ -39,6 +39,10 @@
   background: var(--panel);
 }
 
+.study-order-toggle__option {
+  min-width: 7rem;
+}
+
 .flashcard {
   display: grid;
   width: min(100%, 58rem);

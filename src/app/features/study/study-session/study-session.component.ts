@@ -8,6 +8,8 @@ import { ActivatedRoute, RouterLink } from '@angular/router';
 import { DeckStoreService } from '../../../core/deck-store.service';
 import type { Flashcard } from '../../../core/flashcard';
 
+type StudyOrder = 'sequential' | 'shuffle';
+
 @Component({
   selector: 'app-study-session',
   imports: [MatButtonModule, MatButtonToggleModule, MatCardModule, MatIconModule, RouterLink],
@@ -26,6 +28,9 @@ export class StudySession {
   protected readonly shuffledIds = signal<string[]>([]);
   protected readonly difficultCardIds = signal<ReadonlySet<string>>(new Set<string>());
   protected readonly showDifficultOnly = signal(false);
+  protected readonly studyOrder = computed<StudyOrder>(() =>
+    this.isShuffled() ? 'shuffle' : 'sequential',
+  );
 
   protected readonly deck = computed(() => this.deckStore.deckById(this.deckId()));
   protected readonly orderedCards = computed(() => this.deck()?.cards ?? []);
@@ -135,13 +140,17 @@ export class StudySession {
     this.isFlipped.set(false);
   }
 
-  protected toggleShuffle(): void {
-    const wasShuffled = this.isShuffled();
-    this.isShuffled.set(!wasShuffled);
+  protected setStudyOrder(order: StudyOrder): void {
+    if (order === this.studyOrder()) {
+      return;
+    }
+
+    const shouldShuffle = order === 'shuffle';
+    this.isShuffled.set(shouldShuffle);
     this.activeIndex.set(0);
     this.isFlipped.set(false);
 
-    if (!wasShuffled) {
+    if (shouldShuffle) {
       this.shuffleCurrentSource();
     } else {
       this.shuffledIds.set([]);

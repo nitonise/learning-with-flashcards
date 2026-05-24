@@ -21,7 +21,11 @@
             {{ activeCardIsDifficult() ? 'Marked difficult' : 'Mark difficult' }}
           </button>
         }
-        <mat-button-toggle-group multiple class="study-toggles" aria-label="Study mode options">
+        <mat-button-toggle-group
+          multiple
+          class="study-toggles"
+          aria-label="Difficult card filter"
+        >
           <mat-button-toggle
             [checked]="showDifficultOnly()"
             [disabled]="difficultCount() === 0"
@@ -29,8 +33,25 @@
           >
             Difficult only ({{ difficultCount() }})
           </mat-button-toggle>
-          <mat-button-toggle [checked]="isShuffled()" (change)="toggleShuffle()">
-            {{ isShuffled() ? 'Sequential' : 'Shuffle' }}
+        </mat-button-toggle-group>
+        <mat-button-toggle-group
+          class="study-toggles study-order-toggle"
+          aria-label="Study order"
+          [value]="studyOrder()"
+        >
+          <mat-button-toggle
+            class="study-order-toggle__option"
+            value="sequential"
+            (click)="setStudyOrder('sequential')"
+          >
+            Sequential
+          </mat-button-toggle>
+          <mat-button-toggle
+            class="study-order-toggle__option"
+            value="shuffle"
+            (click)="setStudyOrder('shuffle')"
+          >
+            Shuffle
           </mat-button-toggle>
         </mat-button-toggle-group>
         <a mat-button [routerLink]="['/decks', deck.id, 'edit']">

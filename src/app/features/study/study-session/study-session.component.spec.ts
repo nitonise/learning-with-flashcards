@@ -11,13 +11,14 @@ const STORAGE_KEY = 'learning-with-flashcards.decks';
 
 interface StudySessionTestApi {
   studyCards: () => Flashcard[];
+  studyOrder: () => 'sequential' | 'shuffle';
   activeText: () => string | undefined;
   difficultCount: () => number;
   showDifficultOnly: () => boolean;
   activeCardIsDifficult: () => boolean;
   toggleActiveCardDifficult: () => void;
   toggleDifficultOnly: () => void;
-  toggleShuffle: () => void;
+  setStudyOrder: (order: 'sequential' | 'shuffle') => void;
   nextCard: () => void;
 }
 
@@ -166,6 +167,30 @@ describe('StudySession', () => {
     expect(compiled.querySelector('.flashcard__text')?.textContent).toContain('Answer one');
   });
 
+  it('selects shuffled and sequential study order', () => {
+    const fixture = TestBed.createComponent(StudySession);
+    fixture.detectChanges();
+
+    const component = studySessionApi(fixture);
+
+    expect(component.studyOrder()).toBe('sequential');
+
+    component.setStudyOrder('shuffle');
+
+    expect(component.studyOrder()).toBe('shuffle');
+    expect(component.activeText()).toBeTruthy();
+
+    component.setStudyOrder('sequential');
+
+    expect(component.studyOrder()).toBe('sequential');
+    expect(component.studyCards().map((card) => card.id)).toEqual([
+      'card-one',
+      'card-two',
+      'card-three',
+    ]);
+    expect(component.activeText()).toBe('Question one');
+  });
+
   it('preserves the same card set when shuffled', () => {
     const fixture = TestBed.createComponent(StudySession);
     fixture.detectChanges();
@@ -176,7 +201,7 @@ describe('StudySession', () => {
       .map((card) => card.id)
       .sort();
 
-    component.toggleShuffle();
+    component.setStudyOrder('shuffle');
     const shuffledIds = component
       .studyCards()
       .map((card) => card.id)
@@ -295,7 +320,7 @@ describe('StudySession', () => {
       .map((card) => card.id)
       .sort();
 
-    component.toggleShuffle();
+    component.setStudyOrder('shuffle');
     const shuffledDifficultOnlyIds = component
       .studyCards()
       .map((card) => card.id)
