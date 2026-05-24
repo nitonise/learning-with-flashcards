@@ -105,7 +105,10 @@ export class DeckImageProcessorService {
 
     context.drawImage(image, 0, 0, width, height);
 
-    return canvas.toDataURL(requestedMimeType, requestedMimeType === 'image/png' ? undefined : 0.82);
+    return canvas.toDataURL(
+      requestedMimeType,
+      requestedMimeType === 'image/png' ? undefined : 0.82,
+    );
   }
 
   private readDataUrl(file: File): Promise<string> {

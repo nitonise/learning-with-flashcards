@@ -1,0 +1,6 @@
+dist
+coverage
+.angular
+node_modules
+.agents
+AGENTS.md

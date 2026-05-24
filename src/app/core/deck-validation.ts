@@ -46,9 +46,7 @@ function isFlashcard(value: unknown): value is Flashcard {
     return false;
   }
 
-  return (
-    hasFlashcardSideContent(front, frontImage) && hasFlashcardSideContent(back, backImage)
-  );
+  return hasFlashcardSideContent(front, frontImage) && hasFlashcardSideContent(back, backImage);
 }
 
 function isRecord(value: unknown): value is Record<string, unknown> {

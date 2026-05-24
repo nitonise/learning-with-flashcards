@@ -343,10 +343,7 @@ export class DeckEditor {
     };
   }
 
-  private imageWithAlt(
-    image: FlashcardImage | undefined,
-    alt: string,
-  ): FlashcardImage | undefined {
+  private imageWithAlt(image: FlashcardImage | undefined, alt: string): FlashcardImage | undefined {
     return image ? { ...image, alt: alt.trim() } : undefined;
   }
 
@@ -354,7 +351,8 @@ export class DeckEditor {
     const imageSignal = side === 'front' ? this.frontImage : this.backImage;
     const altControl =
       side === 'front' ? this.cardForm.controls.frontImageAlt : this.cardForm.controls.backImageAlt;
-    const textControl = side === 'front' ? this.cardForm.controls.front : this.cardForm.controls.back;
+    const textControl =
+      side === 'front' ? this.cardForm.controls.front : this.cardForm.controls.back;
 
     imageSignal.set(image);
     altControl.setValue(image?.alt ?? '');

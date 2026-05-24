@@ -21,11 +21,7 @@
             {{ activeCardIsDifficult() ? 'Marked difficult' : 'Mark difficult' }}
           </button>
         }
-        <mat-button-toggle-group
-          multiple
-          class="study-toggles"
-          aria-label="Difficult card filter"
-        >
+        <mat-button-toggle-group multiple class="study-toggles" aria-label="Difficult card filter">
           <mat-button-toggle
             [checked]="showDifficultOnly()"
             [disabled]="difficultCount() === 0"

@@ -30,8 +30,9 @@ function searchDecks(): Deck[] {
 }
 
 function buttonByText(root: ParentNode, text: string): HTMLButtonElement {
-  const button = Array.from(root.querySelectorAll('button')).find((candidate) =>
-    candidate.textContent?.includes(text) || candidate.getAttribute('aria-label') === text,
+  const button = Array.from(root.querySelectorAll('button')).find(
+    (candidate) =>
+      candidate.textContent?.includes(text) || candidate.getAttribute('aria-label') === text,
   );
 
   expect(button).toBeTruthy();

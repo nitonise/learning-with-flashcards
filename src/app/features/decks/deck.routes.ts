@@ -3,8 +3,7 @@ import { Routes } from '@angular/router';
 export const DECK_ROUTES: Routes = [
   {
     path: '',
-    loadComponent: () =>
-      import('./deck-library/deck-library.component').then((m) => m.DeckLibrary),
+    loadComponent: () => import('./deck-library/deck-library.component').then((m) => m.DeckLibrary),
   },
   {
     path: 'new',
