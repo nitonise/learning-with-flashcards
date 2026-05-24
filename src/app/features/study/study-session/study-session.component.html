@@ -1,7 +1,7 @@
 @if (deck(); as deck) {
   <section class="study-layout" aria-labelledby="study-title">
     <header class="study-header">
-      <div>
+      <div class="study-heading">
         <p class="eyebrow">Study session</p>
         <h1 id="study-title" class="page-title">{{ deck.name }}</h1>
       </div>
@@ -9,6 +9,7 @@
       <div class="study-actions">
         @if (activeCard()) {
           <button
+            class="difficulty-toggle-button"
             mat-stroked-button
             type="button"
             [class.is-active]="activeCardIsDifficult()"

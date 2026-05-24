@@ -4,14 +4,18 @@
 }
 
 .study-header {
-  display: flex;
-  align-items: end;
-  justify-content: space-between;
-  gap: 1.5rem;
+  display: grid;
+  gap: 1rem;
 }
 
-.study-header > div {
+.study-heading {
   min-width: 0;
+}
+
+.study-header .page-title {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .study-actions,
@@ -20,6 +24,10 @@
   flex-wrap: wrap;
   gap: 0.6rem;
   align-items: center;
+}
+
+.difficulty-toggle-button {
+  min-width: 12.75rem;
 }
 
 .study-actions .is-active {
@@ -106,11 +114,6 @@
 }
 
 @media (max-width: 760px) {
-  .study-header {
-    align-items: start;
-    flex-direction: column;
-  }
-
   .study-actions,
   .study-controls {
     width: 100%;
