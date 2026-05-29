@@ -86,6 +86,7 @@ describe('DeckLibrary', () => {
     expect(dialog.textContent).toContain('Delete "Study Basics" and all of its cards?');
 
     expect(buttonByText(dialog, 'Delete')).toBeTruthy();
+    await expectNoAxeViolations(document.body);
 
     TestBed.inject(MatDialog).openDialogs[0].close(true);
     await waitForDialogClose();
@@ -102,6 +103,16 @@ describe('DeckLibrary', () => {
     const compiled = fixture.nativeElement as HTMLElement;
     expect(compiled.textContent).toContain('Study Basics');
     expect(compiled.querySelectorAll('.deck-card')).toHaveLength(1);
+  });
+
+  it('uses deck names in repeated action labels', () => {
+    const fixture = TestBed.createComponent(DeckLibrary);
+    fixture.detectChanges();
+
+    const compiled = fixture.nativeElement as HTMLElement;
+    expect(compiled.querySelector('a[aria-label="Study Study Basics"]')).toBeTruthy();
+    expect(compiled.querySelector('a[aria-label="Edit Study Basics"]')).toBeTruthy();
+    expect(compiled.querySelector('button[aria-label="Delete Study Basics"]')).toBeTruthy();
   });
 
   it('filters visible deck cards by typed title fragment', () => {

@@ -268,7 +268,14 @@ describe('DeckEditor', () => {
     fixture.detectChanges();
 
     const compiled = fixture.nativeElement as HTMLElement;
+    const fileInput = compiled.querySelector('#card-front-image') as HTMLInputElement;
+    const error = compiled.querySelector('#card-front-image-error') as HTMLElement;
+
     expect(compiled.textContent).toContain('Choose a JPEG, PNG, or WebP image.');
+    expect(fileInput.getAttribute('aria-describedby')).toBe('card-front-image-error');
+    expect(fileInput.getAttribute('aria-invalid')).toBe('true');
+    expect(error.getAttribute('role')).toBe('alert');
+    expect(error.textContent).toContain('Choose a JPEG, PNG, or WebP image.');
   });
 
   it('shows a validation message for oversized image uploads', async () => {
@@ -461,6 +468,7 @@ describe('DeckEditor', () => {
     expect(dialog.textContent).toContain('Delete this card from the deck?');
 
     expect(buttonByText(dialog, 'Delete')).toBeTruthy();
+    await expectNoAxeViolations(document.body);
 
     TestBed.inject(MatDialog).openDialogs[0].close(true);
     await waitForDialogClose();
@@ -468,6 +476,19 @@ describe('DeckEditor', () => {
     await fixture.whenStable();
 
     expect(compiled.textContent).toContain('Add at least one card before studying this deck.');
+  });
+
+  it('uses card indexes in repeated card action labels', async () => {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify([storedDeckWithCard()]));
+
+    await configureDeckEditor({ deckId: 'deck-editor-test' });
+
+    const fixture = TestBed.createComponent(DeckEditor);
+    fixture.detectChanges();
+
+    const compiled = fixture.nativeElement as HTMLElement;
+    expect(compiled.querySelector('button[aria-label="Edit card 1"]')).toBeTruthy();
+    expect(compiled.querySelector('button[aria-label="Delete card 1"]')).toBeTruthy();
   });
 
   it('passes axe checks', async () => {

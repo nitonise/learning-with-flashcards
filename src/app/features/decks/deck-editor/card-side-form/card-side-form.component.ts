@@ -35,6 +35,7 @@ export class CardSideForm {
   protected readonly title = computed(() => (this.side() === 'front' ? 'Front' : 'Back'));
   protected readonly textInputId = computed(() => `card-${this.side()}`);
   protected readonly fileInputId = computed(() => `card-${this.side()}-image`);
+  protected readonly fileErrorId = computed(() => `card-${this.side()}-image-error`);
   protected readonly altInputId = computed(() => `card-${this.side()}-image-alt`);
 
   protected selectImage(event: Event): void {

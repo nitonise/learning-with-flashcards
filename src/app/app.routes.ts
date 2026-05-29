@@ -8,6 +8,7 @@ export const routes: Routes = [
   },
   {
     path: 'decks',
+    title: 'Deck library',
     loadChildren: () => import('./features/decks/deck.routes').then((m) => m.DECK_ROUTES),
   },
   {

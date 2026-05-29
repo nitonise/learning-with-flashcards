@@ -63,7 +63,14 @@
     </header>
 
     @if (studyCards().length) {
-      <button class="flashcard" type="button" (click)="toggleFlip()">
+      <p class="visually-hidden" aria-live="polite" aria-atomic="true">{{ liveStatus() }}</p>
+
+      <button
+        class="flashcard"
+        type="button"
+        [attr.aria-label]="flashcardAriaLabel()"
+        (click)="toggleFlip()"
+      >
         <span class="flashcard__side">{{ activeSide() }}</span>
         <span class="flashcard__content">
           @if (hasText(activeText())) {

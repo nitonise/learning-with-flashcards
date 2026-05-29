@@ -13,9 +13,13 @@ interface StudySessionTestApi {
   studyCards: () => Flashcard[];
   studyOrder: () => 'sequential' | 'shuffle';
   activeText: () => string | undefined;
+  activeCardStatus: () => string;
+  flashcardAriaLabel: () => string;
+  liveStatus: () => string;
   difficultCount: () => number;
   showDifficultOnly: () => boolean;
   activeCardIsDifficult: () => boolean;
+  toggleFlip: () => void;
   toggleActiveCardDifficult: () => void;
   toggleDifficultOnly: () => void;
   setStudyOrder: (order: 'sequential' | 'shuffle') => void;
@@ -140,15 +144,56 @@ describe('StudySession', () => {
     expect(compiled.querySelector('.flashcard__text')?.textContent).toContain('Question two');
   });
 
-  it('keeps the visible card text in the flashcard accessible name', () => {
+  it('gives the flashcard an explicit accessible name with card status', () => {
     const fixture = TestBed.createComponent(StudySession);
     fixture.detectChanges();
 
     const compiled = fixture.nativeElement as HTMLElement;
     const flashcard = compiled.querySelector('.flashcard') as HTMLButtonElement;
 
-    expect(flashcard.getAttribute('aria-label')).toBeNull();
-    expect(flashcard.textContent).toContain('Question one');
+    expect(flashcard.getAttribute('aria-label')).toContain('Card 1 of 3. Front side.');
+    expect(flashcard.getAttribute('aria-label')).toContain('Text: Question one.');
+    expect(flashcard.getAttribute('aria-label')).toContain('Image: Question one diagram.');
+    expect(flashcard.getAttribute('aria-label')).toContain('Show back side.');
+  });
+
+  it('updates screen-reader status after flips and card navigation', () => {
+    const fixture = TestBed.createComponent(StudySession);
+    fixture.detectChanges();
+
+    const compiled = fixture.nativeElement as HTMLElement;
+    const component = studySessionApi(fixture);
+    const liveRegion = compiled.querySelector('[aria-live="polite"]') as HTMLElement;
+
+    expect(liveRegion.textContent).toContain('Card 1 of 3. Front side.');
+
+    component.toggleFlip();
+    fixture.detectChanges();
+
+    expect(component.liveStatus()).toContain('Card 1 of 3. Back side.');
+    expect(liveRegion.textContent).toContain('Text: Answer one.');
+
+    component.nextCard();
+    fixture.detectChanges();
+
+    expect(component.liveStatus()).toContain('Card 2 of 3. Front side.');
+    expect(liveRegion.textContent).toContain('Text: Question two.');
+  });
+
+  it('announces order and difficult-only filter changes', () => {
+    const fixture = TestBed.createComponent(StudySession);
+    fixture.detectChanges();
+
+    const component = studySessionApi(fixture);
+    component.setStudyOrder('shuffle');
+
+    expect(component.liveStatus()).toContain('Study order set to shuffle.');
+
+    component.toggleActiveCardDifficult();
+    component.toggleDifficultOnly();
+
+    expect(component.showDifficultOnly()).toBe(true);
+    expect(component.liveStatus()).toContain('Difficult-only filter on.');
   });
 
   it('renders front and back images on the correct side', () => {

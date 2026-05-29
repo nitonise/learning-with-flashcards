@@ -59,11 +59,19 @@
           </mat-card-content>
 
           <mat-card-actions class="deck-card__actions" aria-label="Actions for {{ deck.name }}">
-            <a mat-flat-button [routerLink]="['/study', deck.id]">
+            <a
+              mat-flat-button
+              [routerLink]="['/study', deck.id]"
+              [attr.aria-label]="'Study ' + deck.name"
+            >
               <mat-icon aria-hidden="true">school</mat-icon>
               Study
             </a>
-            <a mat-button [routerLink]="['/decks', deck.id, 'edit']">
+            <a
+              mat-button
+              [routerLink]="['/decks', deck.id, 'edit']"
+              [attr.aria-label]="'Edit ' + deck.name"
+            >
               <mat-icon aria-hidden="true">edit</mat-icon>
               Edit
             </a>
@@ -71,6 +79,7 @@
               mat-button
               class="danger-action"
               type="button"
+              [attr.aria-label]="'Delete ' + deck.name"
               (click)="deleteDeck(deck.id, deck.name)"
             >
               <mat-icon aria-hidden="true">delete</mat-icon>

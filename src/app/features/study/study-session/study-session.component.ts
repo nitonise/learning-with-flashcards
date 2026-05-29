@@ -28,6 +28,7 @@ export class StudySession {
   protected readonly shuffledIds = signal<string[]>([]);
   protected readonly difficultCardIds = signal<ReadonlySet<string>>(new Set<string>());
   protected readonly showDifficultOnly = signal(false);
+  protected readonly studyStatusMessage = signal('');
   protected readonly studyOrder = computed<StudyOrder>(() =>
     this.isShuffled() ? 'shuffle' : 'sequential',
   );
@@ -73,6 +74,23 @@ export class StudySession {
     const card = this.activeCard();
     return this.isFlipped() ? card?.backImage : card?.frontImage;
   });
+  protected readonly activeCardStatus = computed(() => {
+    const activeCard = this.activeCard();
+
+    if (!activeCard) {
+      return 'No study card is available.';
+    }
+
+    return `${this.activeCardPosition()}. ${this.activeSide()} side. ${this.activeSideSummary()}`;
+  });
+  protected readonly flashcardAriaLabel = computed(() => {
+    const nextSide = this.isFlipped() ? 'front' : 'back';
+
+    return `${this.activeCardStatus()} Show ${nextSide} side.`;
+  });
+  protected readonly liveStatus = computed(
+    () => this.studyStatusMessage() || this.activeCardStatus(),
+  );
   protected readonly canMoveBack = computed(() => this.activeIndex() > 0);
   protected readonly canMoveForward = computed(
     () => this.activeIndex() < this.studyCards().length - 1,
@@ -84,6 +102,7 @@ export class StudySession {
 
   protected toggleFlip(): void {
     this.isFlipped.update((flipped) => !flipped);
+    this.announceActiveCard();
   }
 
   protected toggleActiveCardDifficult(): void {
@@ -108,17 +127,22 @@ export class StudySession {
     });
 
     if (!wasDifficult || !this.showDifficultOnly()) {
+      this.studyStatusMessage.set(
+        wasDifficult ? 'Card unmarked as difficult.' : 'Card marked as difficult.',
+      );
       return;
     }
 
     if (this.difficultCount() === 0) {
       this.showDifficultOnly.set(false);
       this.resetCurrentRun();
+      this.studyStatusMessage.set('Difficult-only filter off. No difficult cards remain.');
       return;
     }
 
     this.clampActiveIndex();
     this.isFlipped.set(false);
+    this.announceActiveCard('Card removed from difficult-only run.');
   }
 
   protected toggleDifficultOnly(): void {
@@ -128,16 +152,23 @@ export class StudySession {
 
     this.showDifficultOnly.update((showOnly) => !showOnly);
     this.resetCurrentRun();
+    this.announceActiveCard(
+      this.showDifficultOnly()
+        ? `Difficult-only filter on. Showing ${this.studyCards().length} cards.`
+        : 'Difficult-only filter off.',
+    );
   }
 
   protected previousCard(): void {
     this.activeIndex.update((index) => Math.max(0, index - 1));
     this.isFlipped.set(false);
+    this.announceActiveCard();
   }
 
   protected nextCard(): void {
     this.activeIndex.update((index) => Math.min(this.studyCards().length - 1, index + 1));
     this.isFlipped.set(false);
+    this.announceActiveCard();
   }
 
   protected setStudyOrder(order: StudyOrder): void {
@@ -155,6 +186,33 @@ export class StudySession {
     } else {
       this.shuffledIds.set([]);
     }
+
+    this.announceActiveCard(
+      shouldShuffle ? 'Study order set to shuffle.' : 'Study order set to sequential.',
+    );
+  }
+
+  private activeCardPosition(): string {
+    return `Card ${this.activeIndex() + 1} of ${this.studyCards().length}`;
+  }
+
+  private activeSideSummary(): string {
+    const text = this.activeText();
+    const image = this.activeImage();
+    const textSummary = this.hasText(text) ? `Text: ${text.trim()}.` : 'No text.';
+    const imageSummary = image
+      ? this.hasText(image.alt)
+        ? `Image: ${image.alt.trim()}.`
+        : 'Image has no alt text.'
+      : 'No image.';
+
+    return `${textSummary} ${imageSummary}`;
+  }
+
+  private announceActiveCard(prefix = ''): void {
+    this.studyStatusMessage.set(
+      prefix ? `${prefix} ${this.activeCardStatus()}` : this.activeCardStatus(),
+    );
   }
 
   private resetCurrentRun(): void {

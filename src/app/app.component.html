@@ -1,4 +1,6 @@
 <div class="app-shell">
+  <a class="skip-link" href="#main-content">Skip to content</a>
+
   <mat-toolbar class="topbar">
     <a class="brand" routerLink="/decks" aria-label="Flashcards home">
       <span class="brand-mark" aria-hidden="true">F</span>
@@ -39,7 +41,7 @@
     </button>
   </mat-toolbar>
 
-  <main class="app-main" tabindex="-1">
+  <main #mainContent id="main-content" class="app-main" tabindex="-1">
     <router-outlet />
   </main>
 </div>

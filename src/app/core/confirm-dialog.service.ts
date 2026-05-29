@@ -14,6 +14,7 @@ export class ConfirmDialogService {
   confirm(data: ConfirmDialogData): Observable<boolean> {
     return this.dialog
       .open<ConfirmDialog, ConfirmDialogData, boolean>(ConfirmDialog, {
+        ariaLabel: data.title,
         autoFocus: 'first-tabbable',
         data,
         panelClass: 'app-confirm-dialog-panel',

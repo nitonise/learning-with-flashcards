@@ -12,10 +12,12 @@
     [id]="fileInputId()"
     type="file"
     [accept]="acceptedImageTypes()"
+    [attr.aria-describedby]="imageError() ? fileErrorId() : null"
+    [attr.aria-invalid]="imageError() ? 'true' : null"
     (change)="selectImage($event)"
   />
   @if (imageError()) {
-    <p class="field-error">{{ imageError() }}</p>
+    <p [id]="fileErrorId()" class="field-error" role="alert">{{ imageError() }}</p>
   }
   @if (image(); as selectedImage) {
     <figure class="image-preview">
